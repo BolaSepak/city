@@ -1,0 +1,13 @@
+{
+  "name": "FUCKTHERULES CITY",
+  "short_name": "FTR CITY",
+  "description": "Kota virtual FucktheRules: pantau pesananmu, jelajahi kota, lihat galeri.",
+  "start_url": "./city.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2efdf",
+  "theme_color": "#f2efdf",
+  "icons": [
+    {"src":"favicon.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

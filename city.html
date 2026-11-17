@@ -1,0 +1,77 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><meta name="theme-color" content="#12304f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.webmanifest"><title>FUCKTHERULES CITY</title><meta name="description" content="Jelajahi dunia virtual Fuck The Rules: kota sepak bola, pantai, stiker, dan graffiti."><link rel="icon" href="favicon.png"><link rel="stylesheet" href="city.css?v=10"><link rel="stylesheet" href="ui-game.css?v=5"><link rel="stylesheet" href="city-progress.css?v=4"><link rel="stylesheet" href="fttr-shop.css?v=33">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+</head><body>
+<div id="boot" role="status"><img src="logo.png" alt=""><b>FUCKTHERULES CITY</b><div class="bar"><i></i></div><small>Memuat kota…</small></div>
+<main id="cityApp"><canvas id="world" aria-label="Dunia kota virtual Fuck The Rules"></canvas>
+
+<header class="hud-top">
+ <a class="brand" href="index.html" aria-label="FUCKTHERULES City"><img src="logo.png" alt=""><span>FUCKTHERULES<i>CITY</i></span></a>
+ <div class="loc-chip"><b class="live-dot"></b><span id="districtName">CENTRAL CITY</span></div>
+ <div class="hud-actions">
+  <button id="mapBtn" class="hbtn" aria-label="Peta kota"><span data-i="map"></span></button>
+  <button id="onlineBtn" class="hbtn" aria-label="Chat dan pemain online"><span data-i="chat"></span></button>
+  <button id="phoneBtn" class="hbtn hbtn-gold" aria-label="Buka HP"><span data-i="phone"></span><span class="lbl">HP</span></button>
+ </div>
+</header>
+
+<section class="hud-stats" id="hudStats" aria-label="Status karakter">
+ <div class="stat-row">
+  <div class="stat-who"><span class="avatar-dot"></span><div><b id="hudName">WARGA</b><small id="needMood">FIT</small></div></div>
+  <div class="wallet-pill" title="Saldo"><span class="coin" data-i="coin"></span><b id="moneyVal">1.250</b></div>
+  <div class="need" data-need="hunger"><span class="n-ic" data-i="burger"></span><span class="n-lbl">Lapar</span><div class="n-bar"><i id="hungerBar" style="width:86%"></i></div><b id="hungerVal">86</b></div>
+  <div class="need" data-need="thirst"><span class="n-ic" data-i="drop"></span><span class="n-lbl">Haus</span><div class="n-bar"><i id="thirstBar" style="width:90%"></i></div><b id="thirstVal">90</b></div>
+  <div class="need" data-need="energy"><span class="n-ic" data-i="bolt"></span><span class="n-lbl">Energi</span><div class="n-bar"><i id="energyBar" style="width:95%"></i></div><b id="energyVal">95</b></div>
+  <button id="statsMore" class="mini-btn alt" aria-expanded="false" aria-label="Tampilkan status lain"><span data-i="chev"></span></button>
+ </div>
+ <div class="stat-extra">
+  <div class="need" data-need="health"><span class="n-ic" data-i="heart"></span><span class="n-lbl">Sehat</span><div class="n-bar"><i id="healthBar" style="width:100%"></i></div><b id="healthVal">100</b></div>
+  <div class="need" data-need="mood"><span class="n-ic" data-i="smile"></span><span class="n-lbl">Mood</span><div class="n-bar"><i id="moodBar" style="width:80%"></i></div><b id="moodVal">80</b></div>
+  <button id="needsAction" class="mini-btn" aria-label="Makan, minum, dan kesehatan"><span data-i="plus"></span></button>
+ </div>
+</section>
+
+<section class="mission" id="missionHud" hidden aria-live="polite"><div class="m-top"><div class="m-txt"><b id="mTitle">Misi</b><small id="mObj"></small></div><button id="mCancel" class="round-close" aria-label="Batalkan misi">×</button></div><div class="m-bar"><i id="mBar"></i></div><div class="m-meta"><span id="mDist">0 m</span><span id="mProg">1/1</span><span id="mPay">₡0</span></div></section>
+<div class="m-arrow" id="mArrow" hidden></div>
+<div class="hint" id="hint"><span data-i="hand"></span>Ketuk tanah untuk berjalan</div>
+<div id="joy" class="joy" aria-label="Joystick"><i id="joyKnob"></i></div>
+<div id="toast" class="toast" role="status"></div>
+
+<section id="placeCard" class="place-card" hidden><div id="placeArt" class="place-art"><span id="placeGlyph">FT</span><small id="placeTag">STORE</small></div><div class="place-content"><div class="place-title-row"><div><small id="placeType">RETAIL</small><h2 id="placeName">FUCK THE RULES STORE</h2></div><button id="placeClose" class="round-close" aria-label="Tutup informasi">×</button></div><p id="placeDesc"></p><div class="place-meta"><span id="placeDistance">⌖ 0 m</span><span id="placeHours">BUKA · 24 JAM</span></div><button id="placeEnter" class="primary-btn">MASUK <span>↗</span></button></div></section>
+<section id="interiorHud" class="interior-hud" hidden><div><small>KAMU DI DALAM</small><b id="interiorName">FTTR STORE</b></div><button id="viewTop" class="light-btn">ATAS</button><button id="exitBuilding" class="light-btn">← KELUAR</button></section>
+
+<div class="hud-dock" id="hudDock" data-open="false">
+ <div class="dock-panel" id="dockPanel">
+  <nav class="quickbar" aria-label="Menu kota">
+   <button data-app="map"><span data-i="map"></span><small>Peta</small></button>
+   <button data-app="travel"><span data-i="bus"></span><small>Travel</small></button>
+   <button data-app="football"><span data-i="ball"></span><small>Bola</small></button>
+   <button data-app="jobs"><span data-i="job"></span><small>Kerja</small></button>
+   <button data-app="phone"><span data-i="phone"></span><small>HP</small></button>
+  </nav>
+  <div class="cam-tools" aria-label="Kontrol kamera">
+   <button id="zoomIn" class="tool" aria-label="Perbesar"><span data-i="plus"></span></button>
+   <button id="zoomOut" class="tool" aria-label="Perkecil"><span data-i="minus"></span></button>
+   <button id="cameraReset" class="tool" aria-label="Pusatkan kamera"><span data-i="aim"></span></button>
+   <button id="cameraFollow" class="tool follow" aria-label="Ikuti karakter"><span data-i="follow"></span><span class="lbl">IKUTI</span></button>
+   <button id="gfxBtn" class="tool" aria-label="Kualitas gambar"><span data-i="gfx"></span></button>
+  </div>
+ </div>
+ <button id="dockToggle" class="fab" aria-expanded="false" aria-controls="dockPanel" aria-label="Menu"><span data-i="menu"></span></button>
+</div>
+</main>
+<div id="phoneOverlay" class="overlay" hidden><section class="phone-device" role="dialog" aria-modal="true" aria-label="FTTR Phone"><div class="phone-hardware"><span></span></div><div class="phone-screen"><div class="phone-status"><span id="phoneTime">09:41</span><span>4G+　▰ ▰</span></div><header class="phone-head"><div><small>YOUR CITY COMPANION</small><h2 id="phoneTitle">FTTR PHONE</h2></div><button id="phoneClose" class="round-close" aria-label="Tutup HP">×</button></header><div id="phoneBody" class="phone-body"></div><button id="phoneHome" class="phone-home" aria-label="Beranda"><span></span></button></div></section></div>
+<div id="mapOverlay" class="overlay" hidden><section class="map-modal"><header><div><small>CENTRAL CITY</small><h2>PETA KOTA</h2></div><button class="round-close" id="mapClose">×</button></header><div id="mapList" class="map-list"></div><p class="fineprint">Pilih tempat untuk berjalan ke sana. Distrik lain dijangkau lewat stasiun atau halte.</p></section></div>
+<div id="shopOverlay" class="shop-overlay" hidden><header><button id="shopClose" class="light-btn">← KOTA</button><b id="shopTitle">FTTR STORE</b><a id="shopExternal" class="light-btn" target="_blank" rel="noopener" style="display:grid;place-items:center;text-decoration:none;color:inherit">BUKA ↗</a></header><iframe id="shopFrame" title="Toko virtual Fuck The Rules" src="about:blank" loading="lazy"></iframe></div>
+<div id="noticeModal" class="overlay" hidden><section class="notice-card"><button id="noticeClose" class="round-close" aria-label="Tutup">×</button><div id="noticeIcon" class="notice-icon">✦</div><small id="noticeEyebrow">LAYANAN KOTA</small><h2 id="noticeTitle">Segera hadir</h2><p id="noticeText"></p><div id="noticeActions" class="notice-actions"></div></section></div>
+<!-- panel toko FTTR (katalog / produk / tas / checkout / kasir), dipakai interior toko -->
+<div id="panel" class="screen" hidden>
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-bar">
+      <button class="x" id="pBack" hidden>‹ KEMBALI</button>
+      <img class="sb-logo" src="logo.png" alt=""><span id="pTitle"></span>
+      <button class="x" id="pClose" aria-label="Tutup">✕</button>
+    </div>
+    <div id="pBody" class="sheet-body"></div>
+  </div>
+</div>
+<script src="boot-guard.js?v=1"></script><script src="football.js?v=4"></script><script src="config.js?v=1"></script><script src="online.js?v=4"></script><script src="art.js?v=2"></script><script type="module" src="city.js?v=42"></script><script src="ui-game.js?v=2"></script><script>if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));</script></body></html>
