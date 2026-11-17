@@ -22,17 +22,19 @@ export function cityPicker(host,{extra=[],onPick,initial}={}){
     const L=MAP.lake;ctx.fillStyle='#3d86b8';ctx.beginPath();ctx.ellipse(sx(L.x),sz(L.z),L.rx*s,L.rz*s,0,0,6.283);ctx.fill();
     ctx.font='700 '+Math.max(10,Math.min(15,s*9))+'px Inter,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     MAP.zones.forEach(q=>{if(q.n==='Laut'||q.n==='Pantai'){}ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillText(q.n.toUpperCase(),sx((q.r[0]+q.r[1])/2),sz((q.r[2]+q.r[3])/2));});
-    const all=[...MAP.marks,...(s>fit*3?extra:[])];ctx.font='700 11px Inter,Arial,sans-serif';
-    all.forEach(m=>{const x=sx(m.x),y=sz(m.z);if(x<-20||y<-20||x>W+20||y>H+20)return;ctx.fillStyle=m.s?'#d7ff3f':'#171914';ctx.beginPath();ctx.arc(x,y,m.s?5:3.2,0,6.283);ctx.fill();ctx.strokeStyle='#171914';ctx.lineWidth=m.s?1.5:0;ctx.stroke();ctx.fillStyle='#fff';ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(m.n,x,y-10);ctx.shadowBlur=0;});
+    /* Jaringan jalan mengikuti grid/layout dunia FTTR, bukan tile peta eksternal. */
+    ctx.save();ctx.strokeStyle='rgba(35,39,37,.72)';ctx.lineWidth=Math.max(2,4*s);[-104,-62,-23,14,48,76,108,154,208,250].forEach(x=>{ctx.beginPath();ctx.moveTo(sx(x),sz(-58));ctx.lineTo(sx(x),sz(47.5));ctx.stroke();});[-58,-21,-5.5,2,47.5].forEach(z=>{ctx.beginPath();ctx.moveTo(sx(-104),sz(z));ctx.lineTo(sx(250),sz(z));ctx.stroke();});ctx.strokeStyle='rgba(245,245,238,.85)';ctx.lineWidth=Math.max(1,s);[-104,-62,-23,14,48,76,108,154,208,250].forEach(x=>{ctx.beginPath();ctx.moveTo(sx(x),sz(-58));ctx.lineTo(sx(x),sz(47.5));ctx.stroke();});[-58,-21,-5.5,2,47.5].forEach(z=>{ctx.beginPath();ctx.moveTo(sx(-104),sz(z));ctx.lineTo(sx(250),sz(z));ctx.stroke();});ctx.restore();
+    const all=[...MAP.marks,...extra];ctx.font='700 '+Math.max(8,Math.min(12,s*7))+'px Inter,Arial,sans-serif';
+    all.forEach(m=>{const x=sx(m.x),y=sz(m.z);if(x<-20||y<-20||x>W+20||y>H+20)return;const active=lastPicked&&lastPicked.id===m.id;if(m.id&&m.w&&m.d){ctx.fillStyle=active?'rgba(215,255,63,.28)':'rgba(255,255,255,.12)';ctx.strokeStyle=active?'#d7ff3f':'rgba(255,255,255,.75)';ctx.lineWidth=active?2:1;ctx.fillRect(x-m.w*s/2,y-m.d*s/2,m.w*s,m.d*s);ctx.strokeRect(x-m.w*s/2,y-m.d*s/2,m.w*s,m.d*s);}ctx.fillStyle=active?'#d7ff3f':(m.s?'#d7ff3f':'#171914');ctx.beginPath();ctx.arc(x,y,active?7:(m.s?5:4),0,6.283);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=active?2:1;ctx.stroke();ctx.fillStyle='#fff';ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(m.n,x,y-10);ctx.shadowBlur=0;});
     if(pin){const x=sx(pin.x),y=sz(pin.z);ctx.fillStyle='#e0392d';ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x,y-12,9,0,6.283);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-5,y-6);ctx.lineTo(x,y);ctx.lineTo(x+5,y-6);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y-12,3,0,6.283);ctx.fill();}}
-  const P=new Map();let moved=0,pd=0;
+  const P=new Map();let moved=0,pd=0,lastPicked=null;
   const clamp=()=>{ox=Math.max(B.x1,Math.min(B.x2,ox));oz=Math.max(B.z1,Math.min(B.z2,oz));s=Math.max(fit*.9,Math.min(fit*16,s));};
   cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.offsetX,y:e.offsetY});moved=0;if(P.size===2){const[a,b]=[...P.values()];pd=Math.hypot(a.x-b.x,a.y-b.y);}};
   cv.onpointermove=e=>{const p=P.get(e.pointerId);if(!p)return;const nx=e.offsetX,ny=e.offsetY;
     if(P.size===1){ox-=(nx-p.x)/s;oz-=(ny-p.y)/s;moved+=Math.abs(nx-p.x)+Math.abs(ny-p.y);}
     else if(P.size===2){p.x=nx;p.y=ny;const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(pd){s*=d/pd;}pd=d;moved+=20;}
     p.x=nx;p.y=ny;clamp();draw();};
-  cv.onpointerup=cv.onpointercancel=e=>{const p=P.get(e.pointerId);P.delete(e.pointerId);pd=0;if(p&&moved<8&&P.size===0){pin={x:Math.round(wx(e.offsetX)*10)/10,z:Math.round(wz(e.offsetY)*10)/10};draw();onPick&&onPick(pin.x,pin.z,areaName(pin.x,pin.z,extra));}};
+  cv.onpointerup=cv.onpointercancel=e=>{const p=P.get(e.pointerId);P.delete(e.pointerId);pd=0;if(p&&moved<8&&P.size===0){let x=wx(e.offsetX),z=wz(e.offsetY);const nearest=extra.map(m=>({...m,inside:m.w&&m.d&&Math.abs(m.x-x)<=m.w/2+2&&Math.abs(m.z-z)<=m.d/2+2,dist:Math.hypot(m.x-x,m.z-z)})).sort((a,b)=>(b.inside-a.inside)||a.dist-b.dist)[0];lastPicked=nearest&&(nearest.inside||nearest.dist<Math.max(12,22/s))?nearest:null;if(lastPicked){x=lastPicked.x;z=lastPicked.z;}pin={x:Math.round(x*10)/10,z:Math.round(z*10)/10};draw();onPick&&onPick(pin.x,pin.z,lastPicked?.name||areaName(pin.x,pin.z,extra),lastPicked?.id||'');}};
   cv.onwheel=e=>{e.preventDefault();const bx=wx(e.offsetX),bz=wz(e.offsetY);s*=e.deltaY<0?1.2:1/1.2;clamp();ox+=bx-wx(e.offsetX);oz+=bz-wz(e.offsetY);clamp();draw();};
   new ResizeObserver(size).observe(cv);requestAnimationFrame(size);
   const bz=el('div','cu-zoom');[['+',1.4],['−',1/1.4]].forEach(([t,f])=>{const b=el('button','',t);b.type='button';b.onclick=()=>{s*=f;clamp();draw();};bz.append(b);});host.append(bz);
@@ -71,7 +73,7 @@ export function buildUploadForm({cloud,extra=[],precision=3,submitLabel='Kirim f
   const ph=el('input','cu-in');ph.type='file';ph.accept='image/*';const prev=el('img','cu-prev');prev.hidden=true;
   ph.onchange=()=>{file=ph.files[0]||null;prev.hidden=!file;if(file)prev.src=URL.createObjectURL(file);};
   const cityHost=el('div','cu-host'),areaTxt=el('p','cu-hint','Belum ada titik. Ketuk peta untuk menaruh pin.');
-  const picker=cityPicker(cityHost,{extra,onPick:(x,z,n)=>{city={x,z,area:n};areaTxt.textContent='📍 '+n;}});
+  const picker=cityPicker(cityHost,{extra,onPick:(x,z,n,id)=>{city={x,z,area:n,placeId:id};areaTxt.textContent='📍 '+n+(id?' · titik bangunan terpilih':' · titik peta');}});
   const gps=el('button','cu-btn','📡 Pakai GPS');gps.type='button';const q=el('input','cu-in');q.placeholder='Cari tempat, mis. Stamford Bridge, London';const go=el('button','cu-btn','Cari');go.type='button';
   const row=el('div','cu-row');row.append(gps,q,go);const realHost=el('div','cu-host'),place=el('input','cu-in');place.placeholder='Nama lokasi asli (bisa diedit)';place.maxLength=120;const coord=el('p','cu-hint','');
   const setReal=async(lat,lng,name,fly)=>{real={lat:rd(lat),lng:rd(lng)};coord.textContent='Koordinat '+real.lat+', '+real.lng+(precision<5?' (dibulatkan agar tidak menunjuk rumah pribadi)':'');
@@ -87,7 +89,7 @@ export function buildUploadForm({cloud,extra=[],precision=3,submitLabel='Kirim f
     const handle=cleanIg(ig.value);if(ig.value.trim()&&!handle){st.textContent='Username IG tidak valid (huruf, angka, titik, garis bawah).';return;}
     if(!file){st.textContent='Pilih foto dulu.';return;}if(!city){st.textContent='Ketuk peta FucktheRules untuk menaruh pin.';return;}
     sub.disabled=true;try{st.textContent='Mengecilkan foto…';const blob=await compress(file);st.textContent='Mengunggah…';const url=await uploadCloudinary(blob,cloud);
-      st.textContent='Menyimpan…';await onSubmit({url,thumb:thumbOf(url),ig:handle,caption:cap.value.trim().slice(0,200),cityX:city.x,cityZ:city.z,cityArea:city.area,lat:real?real.lat:null,lng:real?real.lng:null,placeName:place.value.trim().slice(0,120)});
+      st.textContent='Menyimpan…';await onSubmit({url,thumb:thumbOf(url),ig:handle,caption:cap.value.trim().slice(0,200),cityX:city.x,cityZ:city.z,cityArea:city.area,placeId:city.placeId||'',lat:real?real.lat:null,lng:real?real.lng:null,placeName:place.value.trim().slice(0,120)});
       st.textContent='Terkirim ✓';ph.value='';file=null;prev.hidden=true;cap.value='';ig.value='';city=null;picker.clear();areaTxt.textContent='Belum ada titik. Ketuk peta untuk menaruh pin.';
     }catch(e){console.error(e);st.textContent='Gagal: '+(e.message||e.code||'coba lagi');}sub.disabled=false;};
   root.append(lab('Username IG'),ig,lab('Foto'),ph,prev,lab('1 · Taruh di peta FucktheRules'),cityHost,areaTxt,lab('2 · Lokasi asli (opsional)'),row,realHost,place,coord,lab('Caption'),cap,sub,st);

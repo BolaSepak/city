@@ -18,6 +18,8 @@ export function createProgress(C){
     x.moveTo(30,26);x.lineTo(40,22);x.quadraticCurveTo(48,30,56,22);x.lineTo(66,26);x.lineTo(78,38);x.lineTo(69,47);x.lineTo(63,42);x.lineTo(63,72);x.lineTo(33,72);x.lineTo(33,42);x.lineTo(27,47);x.lineTo(18,38);x.closePath();x.fill();x.stroke();return c;}
   function badgeCanvas(n){const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');x.fillStyle='#d7ff3f';x.beginPath();x.arc(48,48,44,0,6.283);x.fill();x.fillStyle='#171914';x.font='900 40px Inter,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('+'+n,48,50);return c;}
   const texOf=(k,mk)=>tex[k]||(tex[k]=new T.CanvasTexture(mk()));
+  const shirtLoader=new T.TextureLoader();shirtLoader.setCrossOrigin('anonymous');const imageTextures=new Map();
+  function articleTexture(url,sp){if(!url)return; if(imageTextures.has(url)){sp.material.map=imageTextures.get(url);sp.material.needsUpdate=true;return;}shirtLoader.load(url,t=>{t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;imageTextures.set(url,t);sp.material.map=t;sp.material.needsUpdate=true;const im=t.image;if(im&&im.width&&im.height){const r=im.width/im.height;sp.scale.set(1.35*Math.min(1.25,r),1.35*Math.min(1.25,1/r),1);}},undefined,()=>{});}
 
   /* ---------- penanda di dunia ---------- */
   function clearMarks(){marks.forEach(m=>{m.parent&&m.parent.remove(m);});marks=[];}
@@ -31,7 +33,7 @@ export function createProgress(C){
         const extra=i>=shown,o=list[i],off=(i-(total-1)/2)*1.35;
         const map=extra?texOf('+'+(list.length-shown),()=>badgeCanvas(list.length-shown)):texOf(o.color||'#1b1c1a',()=>shirtCanvas(o.color));
         const sp=new T.Sprite(new T.SpriteMaterial({map,transparent:true,depthTest:false}));
-        sp.renderOrder=20;sp.scale.set(1.15,1.15,1);sp.position.set(cx+off*.7071,y,cz-off*.7071);
+        sp.renderOrder=20;sp.scale.set(1.15,1.15,1);if(!extra&&o.article&&o.image)articleTexture(o.image,sp);sp.position.set(cx+off*.7071,y,cz-off*.7071);
         sp.userData=extra?{shirtMore:p.id}:{shirtId:o.id};parent.add(sp);marks.push(sp);
       }
     });
@@ -52,11 +54,11 @@ export function createProgress(C){
     const ul=el('ul','pg-tl'),idx=STEPS.findIndex(s=>s.id===o.step),saved=(o.timeline||[]);
     STEPS.forEach((s,i)=>{if(i>idx)return;const t=saved.find(x=>x.step===s.id),li=el('li',i===idx?'now':'');li.append(el('b','',AT_NAME[s.at]),el('span','',s.text));if(t&&t.at)li.append(el('em','',dateTxt(t.at)));ul.append(li);});return ul;}
   function orderCard(o){
-    const s=step(o.step),b=open('order',o.name||'Pesanan',AT_NAME[s.at]||'');
+    const s=step(o.step),b=open('order',o.name||'Pesanan',o.article?'UPDATE PER ARTIKEL':(AT_NAME[s.at]||''));
     const pic=el('div','pg-pic');if(o.image){const im=new Image();im.src=o.image;im.alt=o.name||'';im.loading='lazy';pic.append(im);}else{const c=shirtCanvas(o.color,160);pic.append(c);}
-    const meta=el('div','pg-meta');meta.append(el('p','pg-line',[o.size&&('Size '+o.size),o.buyer&&('Pemesan '+o.buyer)].filter(Boolean).join(' · ')),el('p','pg-status',s.text));if(o.note)meta.append(el('p','pg-note','Catatan: '+o.note));
+    const meta=el('div','pg-meta');if(!o.article&&[o.size,o.buyer].some(Boolean))meta.append(el('p','pg-line',[o.size&&('Size '+o.size),o.buyer&&('Pemesan '+o.buyer)].filter(Boolean).join(' · ')));meta.append(el('p','pg-status',o.article?(o.note||s.text):s.text));if(o.note&&!o.article)meta.append(el('p','pg-note','Catatan: '+o.note));if(o.article)meta.append(el('p','pg-line','Status ini berlaku untuk seluruh pesanan artikel. Resi pribadi tersedia di menu Cek Resi website utama.')); 
     const row=el('div','pg-row');row.append(pic,meta);b.append(row,timeline(o));
-    const acts=el('div','pg-acts');if(o.resi){acts.append(el('p','pg-line','Resi '+o.resi),btn('Cek Resi',()=>jnt(o.resi),true));}
+    const acts=el('div','pg-acts');if(o.resi&&!o.article){acts.append(el('p','pg-line','Resi '+o.resi),btn('Cek Resi',()=>jnt(o.resi),true));}
     const p=place(o);if(p)acts.append(btn('Ke bangunan',()=>{close();C.goto(p);}));b.append(acts);}
   function listOf(b,list,empty){if(!list.length){b.append(el('p','pg-empty',empty));return;}list.forEach(o=>{const r=el('button','pg-item');const ic=shirtCanvas(o.color,48);ic.className='pg-ic';r.append(ic);const t=el('span','pg-it');t.append(el('b','',o.name||'Pesanan'),el('small','',o.resi?('Resi '+o.resi):step(o.step).text));r.append(t);r.onclick=()=>orderCard(o);b.append(r);});}
   function office(){ // Cek Pesanan

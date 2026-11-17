@@ -191,3 +191,6 @@ to{opacity:1;transform:translate(-50%,0)}
 .art-item{display:flex;gap:6px;align-items:center;font-size:12px;padding:5px 0}
 .art-item span{flex:1}
 .art-item button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 9px}
+
+/* gallery building selection: markers are hit targets on the native FTTR city map */
+.cu-map{touch-action:none;cursor:crosshair}.cu-host{position:relative}.cu-hint{font-size:12px;line-height:1.45}

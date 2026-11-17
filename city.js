@@ -14,7 +14,7 @@ let THREE, WLD, renderer, scene, camera, raycaster, pointer, ground, cityGroup, 
 let isInside = false, selectedPlace = null, destination = null, lastTime = 0, toastTimer = 0;
 let cameraTarget, cameraFollow=true, cameraZoom=1, dragState=null, pinchDistance=0, topView=false;
 const needs = (()=>{try{return {...{hunger:86,thirst:90,health:100,energy:95,mood:80},...JSON.parse(localStorage.getItem('fttr.city.needs')||'{}')}}catch{return {hunger:86,thirst:90,health:100,energy:95}}})();
-const CITIZEN_S=.7,CAM_OFF=[15.5,28,15.5],CAM_SIN=28/Math.hypot(15.5,15.5,28),BASE_ZOOM=1.3,FHT=1.05,CAM_D=Math.hypot(15.5,15.5,28),VIEWS={iso:{y:Math.PI/4,p:Math.asin(28/Math.hypot(15.5,15.5,28))},top:{y:0,p:Math.PI/2-.004},free:{y:Math.PI/4,p:.95}};
+const CITIZEN_S=.7,CAM_OFF=[0,13,22],CAM_SIN=13/Math.hypot(13,22),BASE_ZOOM=1.3,FHT=1.05,CAM_D=Math.hypot(13,22),VIEWS={iso:{y:0,p:Math.asin(13/Math.hypot(13,22))},top:{y:0,p:Math.PI/2-.004},free:{y:Math.PI/4,p:.24}};
 let tapMarker,stuckT=0,JOBSYS,ride=null,FARM;
 const houseSpots=[];
 const doorPoint=(cx,cz,w,d,face)=>face==='N'?{x:cx,z:cz-d/2-1.2}:face==='E'?{x:cx+d/2+1.2,z:cz}:face==='W'?{x:cx-d/2-1.2,z:cz}:{x:cx,z:cz+d/2+1.2};
@@ -685,12 +685,12 @@ function applyZoom(v){if(window.FTTRArt?.on)return;cameraZoom=Math.max(.16,Math.
 /* v34: tampilan ATAS di dalam ruangan (seperti ATAS di AI Office): kamera lurus dari atas, seluruh ruangan muat di layar. Ketuk lantai tetap jalan; label kategori di toko bisa diketuk. */
 let _topPos=null;   // dibuat saat dipakai: THREE baru dimuat di init()
 function topFit(){const w=innerWidth,h=innerHeight,vw=w<h?24:19;return Math.max(.16,Math.min(2.4,Math.min(vw*(w/h)/17.4,vw/14.6)));}
-/* ===== mode tampilan kota: 2D atas / 2.5D (default) / 3D putar. Kamera tetap orthographic (ringan); hanya sudut yang berubah. ===== */
-let viewMode='iso',_vy=VIEWS.iso.y,_vp=VIEWS.iso.p,_ty=_vy,_tp=_vp,vTrans=false,quality='normal';
+/* ===== Mode kamera: 2D atas / 2.5D isometrik / 3D sudut pandang dekat permukaan jalan. ===== */
+let viewMode='free',_vy=VIEWS.free.y,_vp=VIEWS.free.p,_ty=_vy,_tp=_vp,vTrans=false,quality='normal';
 function camBasis(){return {fx:-Math.sin(_vy),fz:-Math.cos(_vy),rx:Math.cos(_vy),rz:-Math.sin(_vy)};}
-function setViewMode(m,save=true){if(!VIEWS[m])return;viewMode=m;_ty=VIEWS[m].y;_tp=m==='free'?Math.max(.45,Math.min(1.25,(m===viewMode&&_tp>.4&&_tp<1.3&&_tp!==VIEWS.top.p?_tp:VIEWS.free.p))):VIEWS[m].p;if(Math.abs(_ty-_vy)>Math.PI)_vy+=Math.round((_ty-_vy)/(2*Math.PI))*2*Math.PI;
+function setViewMode(m,save=true){if(!VIEWS[m])return;const wasFree=viewMode==='free';viewMode=m;_ty=VIEWS[m].y;_tp=m==='free'?(wasFree?Math.max(.18,Math.min(1.25,_tp)):VIEWS.free.p):VIEWS[m].p;if(Math.abs(_ty-_vy)>Math.PI)_vy+=Math.round((_ty-_vy)/(2*Math.PI))*2*Math.PI;
   try{if(save)localStorage.setItem('ftr.city.view',m);}catch{}document.querySelectorAll('.vw-b[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===m));const rot=document.querySelector('.vw-rot');if(rot)rot.hidden=m!=='free';}
-function rotateView(dy,dp){if(viewMode!=='free')return;_ty+=dy;_tp=Math.max(.45,Math.min(1.25,_tp+dp));}
+function rotateView(dy,dp){if(viewMode!=='free')return;_ty+=dy;_tp=Math.max(.18,Math.min(1.25,_tp+dp));}
 function setQuality(q,save=true){quality=q;if(q==='ringan'){gfxScale=.65;perfLvl=2;if(sunLight)sunLight.castShadow=false;}else{gfxScale=1;perfLvl=0;perfN=0;perfSum=0;if(sunLight)sunLight.castShadow=true;}
   try{if(save)localStorage.setItem('ftr.city.q',q);}catch{}const b=document.querySelector('.vw-q');if(b)b.textContent=q==='ringan'?'⚡ Ringan':'✨ Normal';resize();}
 function buildViewUI(){if(document.querySelector('.vw'))return;const w=document.createElement('div');w.className='vw';
@@ -699,7 +699,7 @@ function buildViewUI(){if(document.querySelector('.vw'))return;const w=document.
   w.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const r=b.dataset.r;rotateView(r==='l'?-Math.PI/4:r==='r'?Math.PI/4:0,r==='u'?.18:r==='d'?-.18:0);});
   w.querySelector('.vw-q').onclick=()=>setQuality(quality==='normal'?'ringan':'normal');
   addEventListener('keydown',e=>{if(viewMode!=='free'||/input|textarea/i.test(e.target.tagName))return;if(e.key==='q'||e.key==='Q')rotateView(-Math.PI/4,0);if(e.key==='e'||e.key==='E')rotateView(Math.PI/4,0);});
-  let sm='iso',sq=null;try{sm=localStorage.getItem('ftr.city.view')||'iso';sq=localStorage.getItem('ftr.city.q');}catch{}
+  let sm='free',sq=null;try{sm=localStorage.getItem('ftr.city.view')||'free';sq=localStorage.getItem('ftr.city.q');}catch{}
   if(!sq&&matchMedia('(pointer:coarse)').matches&&(navigator.deviceMemory||8)<=4)sq='ringan';
   setViewMode(VIEWS[sm]?sm:'iso',false);_vy=_ty;_vp=_tp;setQuality(sq==='ringan'?'ringan':'normal',false);}
 function setTopView(on){on=!!on&&isInside;if(on===topView)return;topView=on;const b=$('#viewTop');if(b){b.textContent=on?'NORMAL':'ATAS';b.classList.toggle('on',on);}

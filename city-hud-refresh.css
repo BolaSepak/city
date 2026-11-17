@@ -1,0 +1,108 @@
+/* FTTR CITY — HUD refresh: clean monochrome, responsive, road-level 3D */
+:root{
+  --navy:#111;--navy-glass:rgba(12,12,12,.78);--ink:#111;--paper:#f7f7f5;--muted:#a5a5a5;
+  --blue1:#fafafa;--blue2:#dedede;--blue3:#777;
+  --grn1:#fff;--grn2:#e7e7e7;--grn3:#777;
+  --gold1:#fff;--gold2:#ededed;--gold3:#777;
+  --red1:#fff;--red2:#e6e6e6;--red3:#777;
+  --hud-line:rgba(255,255,255,.28);--shadow:0 5px 18px rgba(0,0,0,.3);
+}
+html,body{font-family:Inter,system-ui,sans-serif}
+.hud-top{padding:calc(var(--sat) + 9px) calc(var(--sar) + 12px) 0 calc(var(--sal) + 12px);gap:8px}
+.brand{width:36px;height:36px;min-width:36px;padding:0;border:0;border-radius:9px;background:rgba(10,10,10,.68);box-shadow:none}
+.brand img{width:24px;height:29px}
+.brand span{display:none!important}
+/* Keep the district node in the DOM because the game engine updates it, but don't show a city label. */
+.loc-chip{display:none!important}
+.hud-actions{gap:6px;margin-left:auto}
+.hud-actions .hbtn,.hud-actions .hbtn-gold{width:36px;height:36px;min-width:36px;padding:0;border:1px solid rgba(255,255,255,.62);border-radius:9px;background:rgba(10,10,10,.78);color:#fff;box-shadow:none}
+.hud-actions .hbtn svg{width:17px;height:17px}
+.hbtn-gold .lbl{display:none!important}
+#onlineBtn::after{right:-2px;top:-2px;width:9px;height:9px;border:1px solid #111}
+.hud-stats{left:calc(var(--sal) + 12px);right:auto;top:calc(var(--sat) + 54px);width:min(158px,calc(100vw - 24px));display:grid;grid-template-columns:1fr;gap:4px;pointer-events:none}
+.stat-row,.stat-extra{display:contents!important}
+.stat-who,#statsMore,.need[data-need=hunger],.need[data-need=thirst],.need[data-need=mood],#needsAction{display:none!important}
+.wallet-pill{display:flex;width:max-content;min-width:72px;height:23px;padding:0 8px 0 5px;gap:5px;border:1px solid rgba(255,255,255,.36);border-radius:4px;background:rgba(8,8,8,.8);box-shadow:none;color:#fff;font-size:11px;font-weight:700}
+.wallet-pill .coin{width:15px;height:15px;background:transparent;color:#fff}
+.wallet-pill .coin svg{width:12px;height:12px}
+.need[data-need=energy],.need[data-need=health]{display:flex;width:100%;height:8px;min-width:0;padding:1px;gap:0;border:1px solid rgba(255,255,255,.3);border-radius:1px;background:rgba(8,8,8,.82);box-shadow:none;color:#fff}
+.n-ic{display:none!important;width:0;height:0;margin:0;border:0;border-radius:0;background:transparent!important;color:#fff}
+.n-ic svg{width:10px;height:10px;stroke-width:2.8}
+.n-lbl,.need b{display:none!important}
+.n-bar{height:5px;width:100%;min-width:0;flex:1;border-radius:0;background:rgba(255,255,255,.2)}
+.n-bar i{border-radius:0;box-shadow:none}
+.need[data-need=health] .n-bar i{background:#e94343;box-shadow:none}
+.need[data-need=energy] .n-bar i{background:#56b9ee;box-shadow:none}
+.need.low{animation:none;border-color:#e94343}
+.hbtn,.fab,.tool,.primary-btn,.light-btn,.solid-btn,.subtle-btn,.round-close,.mini-btn{box-shadow:none;text-shadow:none}
+.hbtn,.fab,.tool{border:1px solid rgba(255,255,255,.72);background:rgba(10,10,10,.82);color:#fff}
+.hbtn-gold,.tool.active,.fab{background:rgba(10,10,10,.88);color:#fff}
+.fab{width:46px;height:46px;border-radius:12px}
+.fab svg{width:20px;height:20px}
+.tool{width:34px;height:34px;border-radius:9px}
+.tool svg{width:16px;height:16px}
+.tool.follow{min-width:34px;padding:0 8px}
+.primary-btn,.solid-btn.acid{border:1px solid #111;border-radius:9px;background:#111;color:#fff;text-shadow:none;min-height:42px;font-size:13px}
+.light-btn,.solid-btn,.subtle-btn{border:1px solid #222;border-radius:9px;background:#fff;color:#111;box-shadow:none;min-height:38px}
+.round-close{width:32px;height:32px;border:1px solid #222;border-radius:8px;background:#111;color:#fff}
+.mini-btn,.mini-btn.alt{border:1px solid #222;background:#111;color:#fff;box-shadow:none}
+.joy{left:calc(var(--sal) + 14px);bottom:calc(var(--sab) + 14px);width:82px;height:82px;border:1px solid rgba(255,255,255,.8);background:rgba(8,8,8,.35);box-shadow:0 5px 18px rgba(0,0,0,.28)}
+.joy i{width:34px;height:34px;border:1px solid #fff;background:#f3f3f3;box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.hint{max-width:calc(100vw - 36px);padding:8px 12px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(10,10,10,.82);color:#fff;font:600 11px/1.3 Inter,system-ui,sans-serif;box-shadow:none}
+.hud-dock{right:calc(var(--sar) + 12px);bottom:calc(var(--sab) + 12px);gap:7px}
+.dock-panel{width:min(248px,calc(100vw - 24px));padding:9px;border:1px solid rgba(255,255,255,.3);border-radius:13px;background:rgba(10,10,10,.88);box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(12px)}
+.quickbar{gap:5px}
+.quickbar button{min-height:54px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.06);color:#fff}
+.quickbar button svg{width:21px;height:21px}
+.quickbar button small{font-size:10px}
+.cam-tools{gap:5px;padding-top:8px;border-top:1px solid rgba(255,255,255,.2)}
+.vw{right:calc(var(--sar) + 12px);top:calc(var(--sat) + 54px);gap:5px;font-family:Inter,system-ui,sans-serif}
+.vw-seg{border:1px solid rgba(255,255,255,.7);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.24)}
+.vw-b{padding:7px 9px;background:rgba(12,12,12,.82);color:#fff;font-size:10px;font-weight:700}
+.vw-b.on{background:#fff;color:#111}
+.vw-rot{gap:4px}
+.vw-rot button,.vw-q{border:1px solid rgba(255,255,255,.7);border-radius:7px;background:rgba(12,12,12,.82);color:#fff;padding:5px 8px;box-shadow:none;font-size:12px}
+.vw-q{font-size:10px;border-radius:7px}
+.place-card,.notice-card,.map-modal{border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.35)}
+.place-card{background:#f7f7f5;color:#111}
+.notice-card,.map-modal{background:#f7f7f5;color:#111}
+.toast{border:1px solid rgba(255,255,255,.35);border-radius:8px;background:rgba(10,10,10,.9);color:#fff;box-shadow:none}
+@media(max-width:380px){
+ .hud-top{gap:5px}.brand{width:32px;height:32px;min-width:32px}.hud-actions{gap:5px}.hud-actions .hbtn,.hud-actions .hbtn-gold{width:33px;height:33px;min-width:33px}
+ .hud-stats{width:138px;top:calc(var(--sat) + 48px)}
+ .vw{top:calc(var(--sat) + 48px);right:calc(var(--sar) + 8px)}.vw-b{padding:6px 7px;font-size:9px}
+ .joy{width:74px;height:74px}.joy i{width:30px;height:30px}
+}
+@media(min-width:600px){
+ .brand{width:40px;height:40px}.brand img{width:27px;height:32px}
+ .hud-actions .hbtn,.hud-actions .hbtn-gold{width:40px;height:40px;min-width:40px}
+ .hud-stats{left:calc(var(--sal) + 18px);top:calc(var(--sat) + 64px);width:184px}
+ .vw{right:calc(var(--sar) + 18px);top:calc(var(--sat) + 64px)}
+ .need[data-need=health] .n-bar,.need[data-need=energy] .n-bar{height:6px}
+}
+@media(min-width:900px){
+ .hud-top{padding:calc(var(--sat) + 14px) calc(var(--sar) + 20px) 0 calc(var(--sal) + 20px)}
+ .hud-stats{left:calc(var(--sal) + 20px);top:calc(var(--sat) + 68px);width:196px;padding:0;background:none;border:0;box-shadow:none}
+ .wallet-pill{height:25px}.hud-actions .hbtn,.hud-actions .hbtn-gold{width:42px;height:42px;min-width:42px}
+ .hud-dock{position:static}.fab{display:none}
+ .dock-panel,.hud-dock[data-open=true] .dock-panel{display:contents;animation:none}
+ .quickbar{position:absolute;left:50%;bottom:calc(var(--sab) + 16px);transform:translateX(-50%);display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(10,10,10,.82);border:1px solid rgba(255,255,255,.28);box-shadow:0 6px 18px rgba(0,0,0,.25);backdrop-filter:blur(12px)}
+ .quickbar button{width:72px;min-height:54px;border-color:transparent;background:transparent}
+ .cam-tools{position:absolute;right:calc(var(--sar) + 20px);top:50%;transform:translateY(-50%);flex-direction:column;gap:6px;padding:7px;border:1px solid rgba(255,255,255,.28);border-radius:12px;background:rgba(10,10,10,.82);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+ .tool{width:36px;height:36px}.tool.follow{width:36px;padding:0;border-radius:9px}
+ .place-card{left:calc(var(--sal) + 20px);bottom:calc(var(--sab) + 20px)}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .hud-stats{top:calc(var(--sat) + 46px);width:130px}.joy{width:66px;height:66px}.joy i{width:28px;height:28px}.hint{display:none}
+ .vw{top:calc(var(--sat) + 46px)}
+}
+@media(prefers-reduced-motion:reduce){.vw-b,.joy i,.n-bar i{transition:none!important}}
+
+/* Article shipping feed — shared product thumbnails from the main store */
+.city-article-updates{position:fixed;z-index:30;left:calc(var(--sal) + 12px);top:calc(var(--sat) + 104px);width:min(286px,calc(100vw - 24px));color:#fff;font-family:Inter,system-ui,sans-serif;pointer-events:auto}
+.cau-toggle{display:flex;align-items:center;gap:8px;width:100%;min-height:34px;padding:7px 10px;border:1px solid rgba(255,255,255,.5);border-radius:8px;background:rgba(8,8,8,.86);color:#fff;text-align:left;font-size:10px;letter-spacing:.06em}
+.cau-dot{width:7px;height:7px;border-radius:50%;background:#d7ff3f;box-shadow:0 0 8px #d7ff3f}.cau-count{margin-left:auto;color:#d7ff3f}.cau-chevron{font-size:16px;transition:transform .2s}.city-article-updates.open .cau-chevron{transform:rotate(180deg)}
+.cau-body{display:none;max-height:min(42vh,310px);overflow:auto;margin-top:5px;padding:6px;border:1px solid rgba(255,255,255,.25);border-radius:9px;background:rgba(8,8,8,.9);backdrop-filter:blur(10px)}.city-article-updates.open .cau-body{display:block}
+.cau-card{display:flex;align-items:center;gap:9px;padding:6px;border-bottom:1px solid rgba(255,255,255,.12)}.cau-card:last-child{border:0}.cau-card img{width:54px;height:60px;object-fit:contain;border-radius:5px;background:#f4f4f2}.cau-info{display:flex;flex-direction:column;gap:4px;min-width:0}.cau-info b{font-size:11px;line-height:1.25}.cau-info small{font-size:10px;color:#ccc}.cau-info .cau-status{color:#d7ff3f;font-weight:700}.cau-empty{margin:5px;font-size:11px;color:#bbb}
+@media(min-width:700px){.city-article-updates{left:20px;top:112px;width:300px}.cau-card img{width:62px;height:68px}.cau-info b{font-size:12px}}
+@media(max-width:390px){.city-article-updates{top:calc(var(--sat) + 94px);width:min(240px,calc(100vw - 20px))}.cau-toggle{min-height:30px;font-size:9px;padding:6px 8px}.cau-card img{width:46px;height:52px}.cau-info b,.cau-info small{font-size:9px}}

@@ -18,8 +18,8 @@ export function createGallery({THREE:T,places,group,toast,focus}){
     const h=el('div','pg-head');h.append(el('small','pg-tag','GALERI KOTA'),el('h2','pg-title','Upload Fotomu'));b.append(h);
     if(sent().length>=LIMIT){b.append(el('p','pg-empty','Batas '+LIMIT+' foto per hari tercapai. Coba lagi besok.'));upRoot.hidden=false;return;}
     b.append(el('p','pg-line','Foto muncul di kota setelah disetujui admin.'));
-    b.append(buildUploadForm({cloud,precision:3,extra:places.filter(p=>p.x!==undefined).map(p=>({n:p.name,x:p.x,z:p.z})).map(p=>({name:p.n,n:p.n,x:p.x,z:p.z})),submitLabel:'Kirim foto',
-      onSubmit:async d=>{await fs.addDoc(fs.collection(db,'cityGallery'),{url:d.url,thumb:d.thumb,ig:d.ig,caption:d.caption,cityX:d.cityX,cityZ:d.cityZ,cityArea:d.cityArea,lat:d.lat,lng:d.lng,placeName:d.placeName,status:'pending',device:dev,createdAt:fs.serverTimestamp()});mark();toast('Foto terkirim, menunggu persetujuan');}}));
+    b.append(buildUploadForm({cloud,precision:3,extra:places.filter(p=>p.x!==undefined&&p.z!==undefined).map(p=>({id:p.id,name:p.name,n:p.name,x:p.x,z:p.z,w:p.w||0,d:p.d||0})),submitLabel:'Kirim foto',
+      onSubmit:async d=>{await fs.addDoc(fs.collection(db,'cityGallery'),{url:d.url,thumb:d.thumb,ig:d.ig,caption:d.caption,cityX:d.cityX,cityZ:d.cityZ,cityArea:d.cityArea,lat:d.lat,lng:d.lng,placeName:d.placeName||d.cityArea,placeId:d.placeId||'',status:'pending',device:dev,createdAt:fs.serverTimestamp()});mark();toast('Foto terkirim, menunggu persetujuan');}}));
     upRoot.hidden=false;}
 
   /* ---------- kartu detail ---------- */
@@ -37,7 +37,7 @@ export function createGallery({THREE:T,places,group,toast,focus}){
   function pinTexture(url,cb){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=112;const x=c.getContext('2d');x.fillStyle='#fff';x.beginPath();x.arc(56,56,54,0,6.283);x.fill();x.save();x.beginPath();x.arc(56,56,47,0,6.283);x.clip();const k=Math.max(94/img.width,94/img.height);x.drawImage(img,56-img.width*k/2,56-img.height*k/2,img.width*k,img.height*k);x.restore();const t=new T.CanvasTexture(c);cb(t);};img.onerror=()=>{};img.src=url;}
   function render(){const g=group();if(!g)return;pins.forEach(p=>{p.parent&&p.parent.remove(p);p.material.map&&p.material.map.dispose();p.material.dispose();});pins=[];
     items.slice(0,MAXPIN).forEach(it=>{if(typeof it.cityX!=='number'||typeof it.cityZ!=='number')return;
-      const sp=new T.Sprite(new T.SpriteMaterial({transparent:true,depthTest:false,opacity:0}));sp.renderOrder=15;sp.scale.set(1.7,1.7,1);sp.position.set(it.cityX,3.4,it.cityZ);sp.userData={galId:it.id};g.add(sp);pins.push(sp);
+      const sp=new T.Sprite(new T.SpriteMaterial({transparent:true,depthTest:false,opacity:0}));sp.renderOrder=15;sp.scale.set(1.7,1.7,1);const target=places.find(p=>p.id===it.placeId);let py=3.4;if(target?.hit){const bb=new T.Box3().setFromObject(target.hit);if(Number.isFinite(bb.max.y))py=bb.max.y+2.2;}else if(target?.group){const bb=new T.Box3().setFromObject(target.group);if(Number.isFinite(bb.max.y))py=bb.max.y+2.2;}sp.position.set(it.cityX,py,it.cityZ);sp.userData={galId:it.id};g.add(sp);pins.push(sp);
       pinTexture(it.thumb||it.url,t=>{sp.material.map=t;sp.material.opacity=1;sp.material.needsUpdate=true;});});}
   function hit(rc){if(!pins.length)return false;const h=rc.intersectObjects(pins,false);if(!h.length)return false;const it=items.find(x=>x.id===h[0].object.userData.galId);if(it)openItem(it);return true;}
 
