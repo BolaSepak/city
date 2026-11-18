@@ -1,92 +1,80 @@
-/* city-progress.js (v1): ikon baju progres pesanan di atas bangunan + kartu detail + layanan Cek Resi / Cek Pesanan.
-   Data: orders = [{id,code,name,color,size,image,buyer,step,note,resi,timeline:[{step,at}]}]. step = id dari FTR_CITY_STEPS.
-   Sumber data nyata (cityFeed) disambungkan di tahap 3 lewat window.FTRProgress.setOrders(list). Sebelum itu: data DEMO. */
+/* city-progress.js (v2): progres PER ARTIKEL. Gambar asli artikel melayang di atas bangunan tempat artikel itu berada
+   (Toko / Vendor / Office / Kantor J&T / Rumah). Tidak ada data order atau resi di kota: orang mencari resinya sendiri di situs J&T.
+   Data: articles = [{id,name,image,color,step,note,timeline:[{step,at}]}]; step = id dari FTR_CITY_STEPS. */
 export function createProgress(C){
   const T=C.THREE,STEPS=window.FTR_CITY_STEPS||[],L=window.FTR_CITY_LINKS||{};
   const AT={shop:'fttr',vendor:'vendor',office:'hq',jnt:'jnt',home:'residential'};
-  const AT_NAME={shop:'Toko FTR',vendor:'Vendor',office:'Office FTR',jnt:'Kantor J&T',home:'Rumah'};
-  const MAXI=5;let orders=[],demo=false,marks=[],tex={};
+  const AT_NAME={shop:'Toko FTR',vendor:'Vendor',office:'Office FTR',jnt:'Kantor J&T',home:'Sampai tujuan'};
+  const MAXI=4;let arts=[],demo=false,marks=[];const texCache={};
   const step=id=>STEPS.find(s=>s.id===id)||STEPS[0]||{id:'x',at:'shop',text:''};
   const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;};
-  const place=o=>C.places.find(p=>p.id===AT[step(o.step).at]);
-  const dateTxt=v=>{const d=new Date(v);return isNaN(d)?'':d.toLocaleDateString('id-ID',{day:'numeric',month:'short'})+' · '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});};
+  const place=a=>C.places.find(p=>p.id===AT[step(a.step).at]);
+  const dateTxt=v=>{const d=new Date(v);return isNaN(d)?'':d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});};
 
-  /* ---------- ikon baju (kanvas kecil, tanpa gambar eksternal) ---------- */
-  function shirtCanvas(color,size=96){const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d'),s=size/96;
-    x.scale(s,s);x.fillStyle='#171914';x.beginPath();x.arc(48,48,46,0,6.283);x.fill();x.lineWidth=3;x.strokeStyle='#d7ff3f';x.stroke();
-    x.fillStyle=color||'#1b1c1a';x.strokeStyle='#efece0';x.lineWidth=2.5;x.beginPath();
-    x.moveTo(30,26);x.lineTo(40,22);x.quadraticCurveTo(48,30,56,22);x.lineTo(66,26);x.lineTo(78,38);x.lineTo(69,47);x.lineTo(63,42);x.lineTo(63,72);x.lineTo(33,72);x.lineTo(33,42);x.lineTo(27,47);x.lineTo(18,38);x.closePath();x.fill();x.stroke();return c;}
-  function badgeCanvas(n){const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');x.fillStyle='#d7ff3f';x.beginPath();x.arc(48,48,44,0,6.283);x.fill();x.fillStyle='#171914';x.font='900 40px Inter,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('+'+n,48,50);return c;}
-  const texOf=(k,mk)=>tex[k]||(tex[k]=new T.CanvasTexture(mk()));
-  const shirtLoader=new T.TextureLoader();shirtLoader.setCrossOrigin('anonymous');const imageTextures=new Map();
-  function articleTexture(url,sp){if(!url)return; if(imageTextures.has(url)){sp.material.map=imageTextures.get(url);sp.material.needsUpdate=true;return;}shirtLoader.load(url,t=>{t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;imageTextures.set(url,t);sp.material.map=t;sp.material.needsUpdate=true;const im=t.image;if(im&&im.width&&im.height){const r=im.width/im.height;sp.scale.set(1.35*Math.min(1.25,r),1.35*Math.min(1.25,1/r),1);}},undefined,()=>{});}
+  /* ---------- ikon pin: gambar asli artikel (atau kaos berwarna jika belum termuat) ---------- */
+  function shirtArt(x,color){x.fillStyle=color||'#1b1c1a';x.strokeStyle='#fff';x.lineWidth=3;x.beginPath();x.moveTo(34,30);x.lineTo(46,25);x.quadraticCurveTo(64,36,82,25);x.lineTo(94,30);x.lineTo(108,46);x.lineTo(97,57);x.lineTo(90,51);x.lineTo(90,92);x.lineTo(38,92);x.lineTo(38,51);x.lineTo(31,57);x.lineTo(20,46);x.closePath();x.fill();x.stroke();}
+  function pinCanvas(img,color,badge){const c=document.createElement('canvas');c.width=128;c.height=150;const x=c.getContext('2d');
+    x.fillStyle='#111';x.beginPath();x.roundRect?x.roundRect(3,3,122,122,26):x.rect(3,3,122,122);x.fill();
+    x.fillStyle='#fff';x.beginPath();x.roundRect?x.roundRect(8,8,112,112,22):x.rect(8,8,112,112);x.fill();
+    x.fillStyle='#111';x.beginPath();x.moveTo(50,123);x.lineTo(64,146);x.lineTo(78,123);x.fill();x.fillStyle='#fff';x.beginPath();x.moveTo(54,121);x.lineTo(64,138);x.lineTo(74,121);x.fill();
+    x.save();x.beginPath();x.roundRect?x.roundRect(13,13,102,102,17):x.rect(13,13,102,102);x.clip();
+    if(badge!==undefined){x.fillStyle='#ffd51e';x.fillRect(13,13,102,102);x.fillStyle='#111';x.font='900 46px Inter,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('+'+badge,64,66);}
+    else if(img){const k=Math.max(102/img.width,102/img.height);x.drawImage(img,64-img.width*k/2,64-img.height*k/2,img.width*k,img.height*k);}
+    else{x.fillStyle='#f1efe9';x.fillRect(13,13,102,102);shirtArt(x,color);}
+    x.restore();return c;}
+  function iconMaterial(a,badge){
+    const mat=new T.SpriteMaterial({map:new T.CanvasTexture(pinCanvas(null,a&&a.color,badge)),transparent:true,depthTest:false});
+    if(badge===undefined&&a&&a.image){const k=a.image;if(texCache[k]){mat.map=texCache[k];}else{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const t=new T.CanvasTexture(pinCanvas(im));texCache[k]=t;mat.map=t;mat.needsUpdate=true;}catch{}};im.onerror=()=>{};im.src=k;}}
+    return mat;}
 
   /* ---------- penanda di dunia ---------- */
-  function clearMarks(){marks.forEach(m=>{m.parent&&m.parent.remove(m);});marks=[];}
+  function clearMarks(){marks.forEach(m=>{m.parent&&m.parent.remove(m);m.material.dispose();});marks=[];}
   function render(){
     clearMarks();const parent=C.group();if(!parent||!C.places.length)return;
-    const by={};orders.forEach(o=>{const p=place(o);if(p)(by[p.id]=by[p.id]||{p,list:[]}).list.push(o);});
+    const by={};arts.forEach(a=>{const p=place(a);if(p&&p.hit)(by[p.id]=by[p.id]||{p,list:[]}).list.push(a);});
     Object.values(by).forEach(({p,list})=>{
-      const bb=new T.Box3().setFromObject(p.group),y=(isFinite(bb.max.y)?bb.max.y:5)+2.3,cx=(bb.min.x+bb.max.x)/2,cz=(bb.min.z+bb.max.z)/2;
+      p.hit.updateWorldMatrix(true,false);const bb=new T.Box3().setFromObject(p.hit),y=bb.max.y+2.1,cx=(bb.min.x+bb.max.x)/2,cz=(bb.min.z+bb.max.z)/2;
       const shown=list.length>MAXI?MAXI-1:list.length,total=shown+(list.length>shown?1:0);
-      for(let i=0;i<total;i++){
-        const extra=i>=shown,o=list[i],off=(i-(total-1)/2)*1.35;
-        const map=extra?texOf('+'+(list.length-shown),()=>badgeCanvas(list.length-shown)):texOf(o.color||'#1b1c1a',()=>shirtCanvas(o.color));
-        const sp=new T.Sprite(new T.SpriteMaterial({map,transparent:true,depthTest:false}));
-        sp.renderOrder=20;sp.scale.set(1.15,1.15,1);if(!extra&&o.article&&o.image)articleTexture(o.image,sp);sp.position.set(cx+off*.7071,y,cz-off*.7071);
-        sp.userData=extra?{shirtMore:p.id}:{shirtId:o.id};parent.add(sp);marks.push(sp);
-      }
+      for(let i=0;i<total;i++){const extra=i>=shown,off=(i-(total-1)/2)*1.75;
+        const sp=new T.Sprite(iconMaterial(extra?null:list[i],extra?list.length-shown:undefined));
+        sp.renderOrder=20;sp.scale.set(1.55,1.82,1);sp.center.set(.5,0);sp.position.set(cx+off*.7071,y,cz-off*.7071);
+        sp.userData=extra?{moreAt:p.id}:{artId:list[i].id};parent.add(sp);marks.push(sp);}
     });
   }
+  function hit(rc){if(!marks.length)return false;const h=rc.intersectObjects(marks,false);if(!h.length)return false;const u=h[0].object.userData;if(u.artId)openArticle(u.artId);else if(u.moreAt)openBuilding(u.moreAt);return true;}
 
-  /* ---------- kartu / modal ---------- */
+  /* ---------- kartu ---------- */
   let root=null;
   function ui(){if(root)return root;root=el('div','pg-root');root.hidden=true;root.innerHTML='<div class="pg-back"></div><section class="pg-sheet" role="dialog" aria-modal="true"><button class="pg-x" aria-label="Tutup">×</button><div class="pg-body"></div></section>';document.body.appendChild(root);
     root.querySelector('.pg-back').onclick=root.querySelector('.pg-x').onclick=close;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden)close();});return root;}
-  const body=()=>ui().querySelector('.pg-body');
-  function open(kind,title,tag){const b=body();b.innerHTML='';const h=el('div','pg-head');h.append(el('small','pg-tag',tag||''),el('h2','pg-title',title));if(demo)h.append(el('span','pg-demo','DATA CONTOH'));b.append(h);ui().hidden=false;return b;}
+  function open(title,tag){const b=ui().querySelector('.pg-body');b.innerHTML='';const h=el('div','pg-head');h.append(el('small','pg-tag',tag||''),el('h2','pg-title',title));if(demo)h.append(el('span','pg-demo','DATA CONTOH'));b.append(h);ui().hidden=false;return b;}
   function close(){if(root)root.hidden=true;}
-  const btn=(t,fn,acid)=>{const b=el('button','pg-btn'+(acid?' acid':''),t);b.onclick=fn;return b;};
-  const copy=async v=>{try{await navigator.clipboard.writeText(v);C.toast('Disalin: '+v);}catch{C.toast(v);}};
-  const jnt=resi=>{copy(resi);window.open(L.jntTrack||'https://jet.co.id/track','_blank','noopener');};
+  const btn=(t,fn,cls)=>{const b=el('button','pg-btn'+(cls?' '+cls:''),t);b.onclick=fn;return b;};
+  const go=u=>window.open(u,'_blank','noopener');
 
-  function timeline(o){
-    const ul=el('ul','pg-tl'),idx=STEPS.findIndex(s=>s.id===o.step),saved=(o.timeline||[]);
-    STEPS.forEach((s,i)=>{if(i>idx)return;const t=saved.find(x=>x.step===s.id),li=el('li',i===idx?'now':'');li.append(el('b','',AT_NAME[s.at]),el('span','',s.text));if(t&&t.at)li.append(el('em','',dateTxt(t.at)));ul.append(li);});return ul;}
-  function orderCard(o){
-    const s=step(o.step),b=open('order',o.name||'Pesanan',o.article?'UPDATE PER ARTIKEL':(AT_NAME[s.at]||''));
-    const pic=el('div','pg-pic');if(o.image){const im=new Image();im.src=o.image;im.alt=o.name||'';im.loading='lazy';pic.append(im);}else{const c=shirtCanvas(o.color,160);pic.append(c);}
-    const meta=el('div','pg-meta');if(!o.article&&[o.size,o.buyer].some(Boolean))meta.append(el('p','pg-line',[o.size&&('Size '+o.size),o.buyer&&('Pemesan '+o.buyer)].filter(Boolean).join(' · ')));meta.append(el('p','pg-status',o.article?(o.note||s.text):s.text));if(o.note&&!o.article)meta.append(el('p','pg-note','Catatan: '+o.note));if(o.article)meta.append(el('p','pg-line','Status ini berlaku untuk seluruh pesanan artikel. Resi pribadi tersedia di menu Cek Resi website utama.')); 
-    const row=el('div','pg-row');row.append(pic,meta);b.append(row,timeline(o));
-    const acts=el('div','pg-acts');if(o.resi&&!o.article){acts.append(el('p','pg-line','Resi '+o.resi),btn('Cek Resi',()=>jnt(o.resi),true));}
-    const p=place(o);if(p)acts.append(btn('Ke bangunan',()=>{close();C.goto(p);}));b.append(acts);}
-  function listOf(b,list,empty){if(!list.length){b.append(el('p','pg-empty',empty));return;}list.forEach(o=>{const r=el('button','pg-item');const ic=shirtCanvas(o.color,48);ic.className='pg-ic';r.append(ic);const t=el('span','pg-it');t.append(el('b','',o.name||'Pesanan'),el('small','',o.resi?('Resi '+o.resi):step(o.step).text));r.append(t);r.onclick=()=>orderCard(o);b.append(r);});}
-  function office(){ // Cek Pesanan
-    const b=open('office','Cek Pesanan','OFFICE FUCKTHERULES');b.append(el('p','pg-line','Masukkan kode pesananmu (ID pemesanan) untuk melihat progresnya.'));
-    const f=el('div','pg-form'),inp=el('input','pg-input');inp.placeholder='Kode pesanan';inp.autocapitalize='characters';inp.autocomplete='off';const out=el('div','pg-out');
-    const go=()=>{out.innerHTML='';const k=inp.value.trim().toUpperCase();if(!k)return;const o=orders.find(x=>String(x.code).toUpperCase()===k);if(o)orderCard(o);else out.append(el('p','pg-empty','Kode tidak ditemukan. Cek lagi, atau buka halaman Cek Pesanan di web utama.'));};
-    inp.onkeydown=e=>{if(e.key==='Enter')go();};f.append(inp,btn('Cek',go,true));b.append(f,out,btn('Buka web utama',()=>window.open((L.store||'https://fucktherules.my.id')+'/#pantau','_blank','noopener')));}
-  function jntOffice(){ // Cek Resi
-    const b=open('jnt','Cek Resi','KANTOR J&T');const list=orders.filter(o=>step(o.step).at==='jnt');
-    b.append(el('p','pg-line','Paket yang sedang dalam perjalanan. Ketuk Cek Resi untuk menyalin nomor dan membuka pelacakan J&T.'));
-    const f=el('div','pg-form'),inp=el('input','pg-input');inp.placeholder='Nomor resi';inp.autocomplete='off';f.append(inp,btn('Cek',()=>{const v=inp.value.trim();if(v)jnt(v);},true));b.append(f);listOf(b,list,'Belum ada paket di kantor J&T.');}
-  function vendorOffice(){
-    const b=open('vendor','Produksi','VENDOR');const list=orders.filter(o=>step(o.step).at==='vendor');b.append(el('p','pg-line','Pesanan yang sedang di tangan vendor. Ketuk untuk melihat detail.'));listOf(b,list,'Belum ada pesanan di vendor.');}
+  function artImg(a,cls){const w=el('div',cls||'pg-pic');if(a.image){const im=new Image();im.src=a.image;im.alt=a.name||'';im.loading='lazy';im.referrerPolicy='no-referrer';im.onerror=()=>{w.innerHTML='';w.append(pinCanvasFor(a));};w.append(im);}else w.append(pinCanvasFor(a));return w;}
+  function pinCanvasFor(a){const c=document.createElement('canvas');c.width=c.height=120;const x=c.getContext('2d');x.fillStyle='#f1efe9';x.fillRect(0,0,120,120);x.save();x.translate(-4,-6);shirtArt(x,a.color);x.restore();return c;}
+  function timeline(a){const ul=el('ul','pg-tl'),idx=STEPS.findIndex(s=>s.id===a.step),saved=a.timeline||[];
+    STEPS.forEach((s,i)=>{if(i>idx)return;const t=saved.find(x=>x.step===s.id),li=el('li',i===idx?'now':'');const top=el('b','',s.label||AT_NAME[s.at]);if(t&&t.at)top.append(el('em','',dateTxt(t.at)));li.append(top,el('span','',s.text));ul.append(li);});return ul;}
+  function openArticle(id){const a=arts.find(x=>x.id===id);if(!a)return;const s=step(a.step),p=place(a);
+    const b=open(a.name||'Artikel',AT_NAME[s.at]||'');const hero=artImg(a,'pg-hero');b.append(hero);
+    const chip=el('div','pg-chip');chip.append(el('i','',''),el('span','',AT_NAME[s.at]||''));b.append(chip,el('p','pg-status',s.text));if(a.note)b.append(el('p','pg-note',a.note));
+    b.append(timeline(a));const acts=el('div','pg-acts');
+    if(s.at==='jnt')acts.append(btn('Cek Resi',()=>go(L.jntTrack||'https://jet.co.id/track'),'ink'));
+    if(p)acts.append(btn('Lihat di kota',()=>{close();C.goto(p);}));b.append(acts);
+    if(s.at==='jnt')b.append(el('p','pg-hint','Masukkan nomor resi dari pesananmu di situs J&T.'));}
+  function grid(b,list,empty){if(!list.length){b.append(el('p','pg-empty',empty));return;}const g=el('div','pg-grid');list.forEach(a=>{const c=el('button','pg-cell');c.append(artImg(a,'pg-thumb'),el('span','',a.name||'Artikel'));c.onclick=()=>openArticle(a.id);g.append(c);});b.append(g);}
+  const at=k=>arts.filter(a=>step(a.step).at===k);
+  function openBuilding(pid){const p=C.places.find(q=>q.id===pid),k=Object.keys(AT).find(x=>AT[x]===pid);const b=open(p?p.name:'Artikel','DI BANGUNAN INI');grid(b,k?at(k):[],'Kosong.');}
+  function office(){const b=open('Office FucktheRules','CEK PESANAN');b.append(el('p','pg-line','Cek progres pesananmu dengan kode pemesanan di web utama.'));b.append(btn('Cek Pesanan',()=>go((L.store||'https://fucktherules.my.id')+'/#pantau'),'ink'));
+    const l=at('office');if(l.length){b.append(el('p','pg-sub','Sedang dikemas'));grid(b,l);}}
+  function jntOffice(){const b=open('Kantor J&T Express','PENGIRIMAN');b.append(el('p','pg-line','Artikel yang sedang dalam perjalanan. Cari resi pesananmu sendiri di situs J&T.'));b.append(btn('Cek Resi',()=>go(L.jntTrack||'https://jet.co.id/track'),'ink'));grid(b,at('jnt'),'Belum ada artikel di J&T.');}
+  function vendorOffice(){const b=open('Vendor Sablon','PRODUKSI');b.append(el('p','pg-line','Artikel yang sedang dibuat. Ketuk untuk melihat detail.'));grid(b,at('vendor'),'Belum ada artikel di vendor.');}
   const openFor=id=>{if(id==='hq')office();else if(id==='jnt')jntOffice();else if(id==='vendor')vendorOffice();};
-  function openShirt(id){const o=orders.find(x=>x.id===id);if(o)orderCard(o);}
-  function openMore(pid){const p=C.places.find(q=>q.id===pid),b=open('more',p?p.name:'Pesanan','DI BANGUNAN INI');listOf(b,orders.filter(o=>{const q=place(o);return q&&q.id===pid;}),'Kosong.');}
 
   /* ---------- data ---------- */
-  function setOrders(list,isDemo){orders=Array.isArray(list)?list:[];demo=!!isDemo;render();}
-  function demoData(){const n=Date.now(),h=3600e3;return [
-    {id:'d1',code:'FTR-1001',name:'Soerabaja Tee — Hitam',color:'#1b1c1a',size:'L',buyer:'A•••',step:'received',timeline:[{step:'received',at:n-5*h}]},
-    {id:'d2',code:'FTR-1002',name:'North Stand Tee — Putih',color:'#efece0',size:'M',buyer:'R•••',step:'vendor',timeline:[{step:'received',at:n-60*h},{step:'vendor',at:n-30*h}]},
-    {id:'d3',code:'FTR-1003',name:'Soerabaja Tee — Maroon',color:'#6a1f2a',size:'XL',buyer:'D•••',step:'producing',note:'batch 2',timeline:[{step:'received',at:n-90*h},{step:'vendor',at:n-70*h},{step:'producing',at:n-20*h}]},
-    {id:'d4',code:'FTR-1004',name:'Away End Tee — Navy',color:'#1f2f55',size:'L',buyer:'F•••',step:'done',timeline:[]},
-    {id:'d5',code:'FTR-1005',name:'North Stand Tee — Hitam',color:'#1b1c1a',size:'M',buyer:'S•••',step:'jnt',resi:'JP1234567890',timeline:[{step:'jnt',at:n-8*h}]},
-    {id:'d6',code:'FTR-1006',name:'Soerabaja Tee — Hitam',color:'#1b1c1a',size:'S',buyer:'M•••',step:'jnt',resi:'JP0987654321',timeline:[]},
-    {id:'d7',code:'FTR-1007',name:'Away End Tee — Putih',color:'#efece0',size:'XL',buyer:'K•••',step:'vendor',timeline:[]}];}
-  function init(){setOrders(demoData(),true);}
-  function hit(rc){if(!marks.length)return false;const h=rc.intersectObjects(marks,false);if(!h.length)return false;const u=h[0].object.userData;if(u.shirtId)openShirt(u.shirtId);else if(u.shirtMore)openMore(u.shirtMore);return true;}
-  return {hit,init,setOrders,render,open:openFor,openShirt,openMore,close,orders:()=>orders};
+  function setArticles(list,isDemo){arts=Array.isArray(list)?list:[];demo=!!isDemo;render();}
+  const demoData=()=>[{id:'d1',name:'Sleman Tee',color:'#1b1c1a',step:'jnt'},{id:'d2',name:'Soerabaja Tee',color:'#6a1f2a',step:'producing'},{id:'d3',name:'North Stand Tee',color:'#efece0',step:'vendor'},{id:'d4',name:'Away End Tee',color:'#1f2f55',step:'received'}];
+  function init(){setArticles(demoData(),true);}
+  return {hit,init,setArticles,render,open:openFor,openArticle,openBuilding,close,articles:()=>arts};
 }

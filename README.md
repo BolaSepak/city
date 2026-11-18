@@ -3,7 +3,7 @@
 Kota virtual FucktheRules: pantau progres pesanan, jelajahi kota, dan lihat galeri teman-teman.
 Salinan dari FTTR-CITY-V36 dengan branding FucktheRules. Semua file di root (tanpa folder).
 
-## Status pengerjaan
+## Status pengerjaan (v3: progres per artikel, pemilih bangunan, kamera 3D belakang, UI baru)
 - [x] Tahap 1: fondasi, branding, `config.js` baru
 - [x] Tahap 2: bangunan Vendor + Kantor J&T, HQ jadi Office FTR, ikon baju (data contoh), Cek Resi / Cek Pesanan (`city-progress.js`)
 - [x] Tahap 3: tab admin "Progres" (tulis ke timeline toko + kota). Kota membaca `cityFeed` lewat `city-feed.js`; `firestore.rules` untuk project city

@@ -26,11 +26,11 @@ window.FTR_CITY_LINKS = {
 
 /* Langkah progres (teks default; nanti bisa diedit admin lewat cityConfig). Posisi = bangunan di kota. */
 window.FTR_CITY_STEPS = [
-  { id: 'received',  at: 'shop',    text: 'Pesananmu mendarat di markas FTR. Kami mulai bergerak.' },
-  { id: 'vendor',    at: 'vendor',  text: 'Desainmu sudah di tangan vendor. Mesin sablon mulai menyala.' },
-  { id: 'producing', at: 'vendor',  text: 'Kain dipotong, sablon naik. Kaosmu lagi dibentuk.' },
-  { id: 'done',      at: 'vendor',  text: 'Lolos pemeriksaan kualitas. Kaosmu siap tampil.' },
-  { id: 'packed',    at: 'office',  text: 'Dibungkus rapi, tinggal berangkat.' },
-  { id: 'jnt',       at: 'jnt',     text: 'Paket sudah di tangan J&T. Perjalanan dimulai.' },
-  { id: 'arrived',   at: 'home',    text: 'Paket mendarat di rumahmu. Kaos ini resmi jadi milikmu.' }
+  { id: 'received', label: 'Pesanan diterima',  at: 'shop',    text: 'Pesananmu mendarat di markas FTR. Kami mulai bergerak.' },
+  { id: 'vendor', label: 'Masuk vendor',    at: 'vendor',  text: 'Desainmu sudah di tangan vendor. Mesin sablon mulai menyala.' },
+  { id: 'producing', label: 'Produksi', at: 'vendor',  text: 'Kain dipotong, sablon naik. Kaosmu lagi dibentuk.' },
+  { id: 'done', label: 'Kaos jadi',      at: 'vendor',  text: 'Lolos pemeriksaan kualitas. Kaosmu siap tampil.' },
+  { id: 'packed', label: 'Dikemas',    at: 'office',  text: 'Dibungkus rapi, tinggal berangkat.' },
+  { id: 'jnt', label: 'Diserahkan ke J&T',       at: 'jnt',     text: 'Paket sudah di tangan J&T. Perjalanan dimulai.' },
+  { id: 'arrived', label: 'Sampai tujuan',   at: 'home',    text: 'Paket mendarat di rumahmu. Kaos ini resmi jadi milikmu.' }
 ];

@@ -1,31 +1,34 @@
 rules_version = '2';
-// Project Firebase "city". Publik membaca cityFeed/cityConfig dan foto approved. Penulisan lain hanya admin.
+// Project Firebase "city". Publik membaca cityArticles/cityConfig dan foto approved. Penulisan lain hanya admin.
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
       return request.auth != null
         && request.auth.token.email in ['diasadhityap@gmail.com', 'fvcktherules3404@gmail.com'];
     }
-    match /cityFeed/{id}   { allow read: if true; allow write: if isAdmin(); }
-    match /cityConfig/{id} { allow read: if true; allow write: if isAdmin(); }
+    // Progres per ARTIKEL (tanpa data order, pembeli, atau resi).
+    match /cityArticles/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /cityConfig/{id}   { allow read: if true; allow write: if isAdmin(); }
 
-    // Galeri: publik hanya boleh MEMBUAT foto berstatus pending (dengan field terbatas) dan MEMBACA yang approved.
+    // Galeri: publik hanya boleh MEMBUAT foto berstatus pending (field terbatas) dan MEMBACA yang approved.
     function okNum(v, lo, hi) { return v == null || (v is number && v >= lo && v <= hi); }
     match /cityGallery/{id} {
       allow read: if resource.data.status == 'approved' || isAdmin();
       allow create: if isAdmin() || (
-        request.resource.data.keys().hasOnly(['url','thumb','ig','caption','cityX','cityZ','cityArea','lat','lng','placeName','status','device','createdAt'])
+        request.resource.data.keys().hasOnly(['url','thumb','ig','caption','place','cityX','cityZ','cityY','cityArea','lat','lng','placeName','status','device','createdAt'])
         && request.resource.data.status == 'pending'
         && request.resource.data.createdAt == request.time
         && request.resource.data.url is string && request.resource.data.url.matches('https://res\\.cloudinary\\.com/.*') && request.resource.data.url.size() < 400
         && request.resource.data.thumb is string && request.resource.data.thumb.size() < 500
         && request.resource.data.ig is string && request.resource.data.ig.size() <= 30
         && request.resource.data.caption is string && request.resource.data.caption.size() <= 200
+        && request.resource.data.place is string && request.resource.data.place.size() <= 60
         && request.resource.data.placeName is string && request.resource.data.placeName.size() <= 120
         && request.resource.data.cityArea is string && request.resource.data.cityArea.size() <= 120
         && request.resource.data.device is string && request.resource.data.device.size() <= 60
         && request.resource.data.cityX is number && request.resource.data.cityX >= -200 && request.resource.data.cityX <= 300
-        && request.resource.data.cityZ is number && request.resource.data.cityZ >= -260 && request.resource.data.cityZ <= 120
+        && request.resource.data.cityZ is number && request.resource.data.cityZ >= -270 && request.resource.data.cityZ <= 120
+        && okNum(request.resource.data.get('cityY', null), -5, 200)
         && okNum(request.resource.data.get('lat', null), -90, 90) && okNum(request.resource.data.get('lng', null), -180, 180));
       allow update, delete: if isAdmin();
     }

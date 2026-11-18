@@ -1,6 +1,6 @@
 /* city-realmap.js (v1): "Peta Nyata" ala Instagram Map. Gelembung foto di lokasi asli, cluster saat berdekatan,
    ketuk untuk kartu detail (foto besar, @IG, lokasi asli, caption) + tombol "Lihat di kota FTR". */
-import {loadLeaflet,geoSearch} from './city-upload.js?v=1';
+import {loadLeaflet,geoSearch,baseLayers} from './city-upload.js?v=3';
 const MC='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/';
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -30,8 +30,8 @@ export function createRealMap({getItems,onCity,toast}){
   async function open(){
     try{L=await loadLeaflet();await loadCluster();}catch(e){toast(e.message);return;}
     if(!root)build();root.hidden=false;
-    if(!map){map=L.map(root.host,{worldCopyJump:true,zoomControl:true}).setView([-2.5,118],4);root.host.classList.add('dark');
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+    if(!map){map=L.map(root.host,{worldCopyJump:true,zoomControl:true}).setView([-2.5,118],4);
+      baseLayers(L,map);
       cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:55,iconCreateFunction:c=>{const ms=c.getAllChildMarkers(),last=ms[0].options.it;
         return L.divIcon({className:'rm-ic',html:`<div class="rm-pin"><img src="${esc(last.thumb||last.url)}" alt=""><b>${ms.length}</b></div>`,iconSize:[54,64],iconAnchor:[27,62]});}});
       map.addLayer(cluster);}
