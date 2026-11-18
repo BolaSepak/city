@@ -11,7 +11,7 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 
 ## Apa yang berubah di v3
 - **Progres per ARTIKEL**, bukan per order. Gambar asli artikel muncul di atas bangunan tempat artikel itu berada. Kota tidak menampilkan data order, pembeli, atau resi; orang mencari resinya sendiri di situs J&T (tombol Cek Resi) dan kode pesanan di web utama (Cek Pesanan di Office).
-- **Upload galeri memilih BANGUNAN** di gambar asli peta FucktheRules (tiap bangunan punya hitbox). Foto tampil di atas bangunan itu.
+- **Upload galeri di gambar asli peta FucktheRules**: ketuk **bangunan** (hitbox) = foto tampil di atas bangunan itu; ketuk **tempat lain** (jalan, taman, mana saja) = titik bebas persis di situ.
 - **3D = kamera dari belakang karakter**; geser layar untuk memutar, joystick mengikuti arah kamera.
 - UI baru bertema web utama (kertas, tinta, Inter, kuning/lavender), nama kota di atas dihapus, bar status tipis ala GTA, kontrol kecil di HP dan melebar di desktop.
 
@@ -23,7 +23,7 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-3`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-4`).
 
 ## 4. Ekspor gambar peta (sekali, setelah kota online)
 1. Buka `https://city.fucktherules.my.id/?exportmap=1` di **laptop atau HP**, tunggu sekitar 5 detik. Dua file terunduh: `city-map.jpg` dan `city-map.json`.
@@ -44,7 +44,7 @@ Cloud `dpkmdjfbt`, preset `gloriam-galeri` (Unsigned). Foto kota masuk folder `f
 ## 7. Uji menyeluruh
 1. Admin > Progres Artikel: pilih satu artikel > Masuk vendor > Kirim. Kota: gambar artikel muncul di Vendor. Web utama: timeline order artikel itu berubah.
 2. Ulangi dengan Diserahkan ke J&T: gambar pindah ke Kantor J&T. Ketuk bangunan J&T: ada Cek Resi (membuka situs J&T).
-3. Kota > Upload Fotomu: pilih foto, ketuk stadion di peta, GPS, kirim. Admin > Galeri Kota > Setujui. Pin foto muncul di atas stadion.
+3. Kota > Upload Fotomu: pilih foto, ketuk stadion (atau jalan) di peta, GPS, kirim. Admin > Galeri Kota > Setujui. Pin foto muncul di atas stadion.
 4. Peta Nyata: gelembung foto > ketuk > Lihat di kota FTR.
 5. Mode 2D / 2.5D / 3D (3D: geser layar memutar kamera, joystick maju = menjauhi kamera).
 

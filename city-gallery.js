@@ -1,6 +1,6 @@
 /* city-gallery.js (v2): Upload Fotomu, pin foto di ATAS BANGUNAN yang dipilih, kartu detail. Data: cityGallery (Firebase city).
    Publik hanya bisa membuat foto berstatus pending; yang tampil di kota hanya yang approved oleh admin. */
-import {buildUploadForm,loadCityMap} from './city-upload.js?v=3';
+import {buildUploadForm,loadCityMap} from './city-upload.js?v=4';
 const MAXPIN=80,PERB=3,DAY=864e5,LIMIT=5;
 export function createGallery({THREE:T,places,group,toast,focus}){
   const cfgFb=window.FTR_CITY_FIREBASE,cloud=window.FTR_CITY_CLOUDINARY;let fs=null,db=null,pins=[],items=[],root=null,upRoot=null,RM=null;
@@ -19,7 +19,7 @@ export function createGallery({THREE:T,places,group,toast,focus}){
     if(!db){toast('Galeri belum aktif');return;}
     if(!upRoot)upRoot=sheet();const b=upRoot.body;b.innerHTML='';b.append(head('GALERI KOTA','Upload Fotomu'));
     if(sent().length>=LIMIT){b.append(el('p','pg-empty','Batas '+LIMIT+' foto per hari tercapai. Coba lagi besok.'));upRoot.hidden=false;return;}
-    b.append(el('p','pg-line','Foto muncul di atas bangunan pilihanmu setelah disetujui admin.'));
+    b.append(el('p','pg-line','Foto muncul di titik pilihanmu (di atas bangunan, atau bebas di jalan/taman) setelah disetujui admin.'));
     b.append(buildUploadForm({cloud,precision:3,submitLabel:'Kirim foto',
       getMap:()=>loadCityMap({base:'',live:window.FTRCityMap&&window.FTRCityMap.snapshot}),
       onSubmit:async d=>{await fs.addDoc(fs.collection(db,'cityGallery'),{url:d.url,thumb:d.thumb,ig:d.ig,caption:d.caption,place:d.place,cityX:d.cityX,cityZ:d.cityZ,cityY:d.cityY,cityArea:d.cityArea,lat:d.lat,lng:d.lng,placeName:d.placeName,status:'pending',device:dev,createdAt:fs.serverTimestamp()});mark();toast('Foto terkirim, menunggu persetujuan');}}));
@@ -49,7 +49,7 @@ export function createGallery({THREE:T,places,group,toast,focus}){
   function bbox(){const m={};try{(window.FTRCityMap?window.FTRCityMap.getBoxes():[]).forEach(b=>{m[b.id]=b;});}catch{}return m;}
   function render(){const g=group();if(!g)return;pins.forEach(p=>{p.parent&&p.parent.remove(p);p.material.map&&p.material.map.dispose();p.material.dispose();});pins=[];
     const bx=bbox(),by={};items.slice(0,MAXPIN).forEach(i=>{if(typeof i.cityX!=='number'||typeof i.cityZ!=='number')return;(by[keyOf(i)]=by[keyOf(i)]||[]).push(i);});
-    Object.entries(by).forEach(([k,list])=>{const b=list[0].place&&bx[list[0].place],cx=b?b.cx:list[0].cityX,cz=b?b.cz:list[0].cityZ,y=(b?b.top:(list[0].cityY||6))+4.6;
+    Object.entries(by).forEach(([k,list])=>{const b=list[0].place&&bx[list[0].place],cx=b?b.cx:list[0].cityX,cz=b?b.cz:list[0].cityZ,y=b?b.top+4.6:(list[0].place?(list[0].cityY||6)+4.6:3.4);
       const shown=list.length>PERB?PERB-1:list.length,total=shown+(list.length>shown?1:0);
       for(let i=0;i<total;i++){const extra=i>=shown,off=(i-(total-1)/2)*1.7,sp=new T.Sprite(spriteFor(list[i],extra?list.length-shown:undefined));
         sp.renderOrder=15;sp.scale.set(1.5,1.76,1);sp.center.set(.5,0);sp.position.set(cx+off*.7071,y,cz-off*.7071);sp.userData=extra?{galKey:k}:{galId:list[i].id,galKey:k};g.add(sp);pins.push(sp);}});}

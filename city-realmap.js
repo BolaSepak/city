@@ -1,6 +1,6 @@
 /* city-realmap.js (v1): "Peta Nyata" ala Instagram Map. Gelembung foto di lokasi asli, cluster saat berdekatan,
    ketuk untuk kartu detail (foto besar, @IG, lokasi asli, caption) + tombol "Lihat di kota FTR". */
-import {loadLeaflet,geoSearch,baseLayers} from './city-upload.js?v=3';
+import {loadLeaflet,geoSearch,baseLayers} from './city-upload.js?v=4';
 const MC='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/';
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
