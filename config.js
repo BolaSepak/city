@@ -21,6 +21,8 @@ window.FTR_CITY_CLOUDINARY = {
 /* Toko utama (tautan "Ke Toko") dan pelacakan J&T (tombol Cek Resi). */
 window.FTR_CITY_LINKS = {
   store: 'https://fucktherules.my.id',
+  game: 'https://game.fucktherules.my.id/',
+  storeFirebase: 'https://fucktherules.my.id/firebase.js?v=20261045',
   jntTrack: 'https://jet.co.id/track'
 };
 

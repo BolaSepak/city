@@ -24,3 +24,7 @@ Salinan dari FTTR-CITY-V36 dengan branding FucktheRules. Semua file di root (tan
 - `FTTR_CITY_API`: backend chat/online opsional (`server.js`, lihat `ONLINE-BACKEND.md`). Kosong = mode solo.
 
 Catatan lama V36 (gameplay, HUD, pekerjaan, pertanian) ada di riwayat repo asalnya; kodenya tetap sama.
+
+
+## Toko
+Masuk Toko FTR membuka game toko (`city-store-embed.js`, iframe layar penuh). Cek Resi / Cek Pesanan: `city-orders.js` (pencarian ID/email/HP lewat `firebase.js` web utama).

@@ -60,15 +60,15 @@ export function createProgress(C){
     const b=open(a.name||'Artikel',AT_NAME[s.at]||'');const hero=artImg(a,'pg-hero');b.append(hero);
     const chip=el('div','pg-chip');chip.append(el('i','',''),el('span','',AT_NAME[s.at]||''));b.append(chip,el('p','pg-status',s.text));if(a.note)b.append(el('p','pg-note',a.note));
     b.append(timeline(a));const acts=el('div','pg-acts');
-    if(s.at==='jnt')acts.append(btn('Cek Resi',()=>go(L.jntTrack||'https://jet.co.id/track'),'ink'));
+    if(s.at==='jnt')acts.append(btn('Cek Resi',()=>{close();C.lookup&&C.lookup('resi');},'ink'));
     if(p)acts.append(btn('Lihat di kota',()=>{close();C.goto(p);}));b.append(acts);
-    if(s.at==='jnt')b.append(el('p','pg-hint','Masukkan nomor resi dari pesananmu di situs J&T.'));}
+    if(s.at==='jnt')b.append(el('p','pg-hint','Cari pesananmu dengan ID order, email, atau no. HP untuk melihat resinya.'));}
   function grid(b,list,empty){if(!list.length){b.append(el('p','pg-empty',empty));return;}const g=el('div','pg-grid');list.forEach(a=>{const c=el('button','pg-cell');c.append(artImg(a,'pg-thumb'),el('span','',a.name||'Artikel'));c.onclick=()=>openArticle(a.id);g.append(c);});b.append(g);}
   const at=k=>arts.filter(a=>step(a.step).at===k);
   function openBuilding(pid){const p=C.places.find(q=>q.id===pid),k=Object.keys(AT).find(x=>AT[x]===pid);const b=open(p?p.name:'Artikel','DI BANGUNAN INI');grid(b,k?at(k):[],'Kosong.');}
-  function office(){const b=open('Office FucktheRules','CEK PESANAN');b.append(el('p','pg-line','Cek progres pesananmu dengan kode pemesanan di web utama.'));b.append(btn('Cek Pesanan',()=>go((L.store||'https://fucktherules.my.id')+'/#pantau'),'ink'));
+  function office(){const b=open('Office FucktheRules','CEK PESANAN');b.append(el('p','pg-line','Cek progres pesananmu dengan ID order, email, atau no. HP.'));b.append(btn('Cek Pesanan',()=>{close();C.lookup&&C.lookup('lacak');},'ink'));
     const l=at('office');if(l.length){b.append(el('p','pg-sub','Sedang dikemas'));grid(b,l);}}
-  function jntOffice(){const b=open('Kantor J&T Express','PENGIRIMAN');b.append(el('p','pg-line','Artikel yang sedang dalam perjalanan. Cari resi pesananmu sendiri di situs J&T.'));b.append(btn('Cek Resi',()=>go(L.jntTrack||'https://jet.co.id/track'),'ink'));grid(b,at('jnt'),'Belum ada artikel di J&T.');}
+  function jntOffice(){const b=open('Kantor J&T Express','PENGIRIMAN');b.append(el('p','pg-line','Artikel yang sedang dalam perjalanan. Cari pesananmu dulu (ID order, email, atau no. HP) untuk melihat resinya.'));b.append(btn('Cek Resi',()=>{close();C.lookup&&C.lookup('resi');},'ink'));grid(b,at('jnt'),'Belum ada artikel di J&T.');}
   function vendorOffice(){const b=open('Vendor Sablon','PRODUKSI');b.append(el('p','pg-line','Artikel yang sedang dibuat. Ketuk untuk melihat detail.'));grid(b,at('vendor'),'Belum ada artikel di vendor.');}
   const openFor=id=>{if(id==='hq')office();else if(id==='jnt')jntOffice();else if(id==='vendor')vendorOffice();};
 

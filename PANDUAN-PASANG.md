@@ -2,6 +2,13 @@
 
 Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sudah ada), **Firebase "city"** (`city-fucktherules`).
 
+## Toko = game toko (v3.1)
+- **Masuk toko di kota membuka game toko (`game.fucktherules.my.id`) persis, lengkap 3D, katalog, checkout Midtrans, dan HP**, di lapisan layar penuh dengan tombol **‹ Kota**. Kota berhenti menggambar selama toko terbuka. Tidak ada kode game yang diduplikasi, jadi toko di kota selalu sama dengan game.
+- Agar game langsung terbuka tanpa layar intro saat dipanggil dari kota, upload isi `game-main-embed.zip` ke repo game (hanya `game.js`, `style.css`, `index.html` yang berubah; tanpa itu game tetap jalan, hanya intro PLAY tampil dulu).
+- Alamat game diatur di `config.js` (`FTR_CITY_LINKS.game`).
+- **Cek Resi** (Kantor J&T) dan **Cek Pesanan** (Office) memakai pencarian yang SAMA dengan web utama dan HP di game: ketik **ID order / email / no. HP**, hasilnya daftar pesanan, lalu detail dengan resi dan tombol *Salin resi* / *Lacak di J&T ›* (baru setelah resi ketemu). Cek Pesanan menampilkan timeline lengkap. Data pembeli sudah tersamar dari web utama.
+- Pencarian ini membaca `https://fucktherules.my.id/firebase.js` (modul yang sama dengan game). Pastikan **API key Google** project toko mengizinkan `https://city.fucktherules.my.id/*` (Google Cloud Console > Credentials > HTTP referrers), sama seperti yang dulu dilakukan untuk game.
+
 ## Apa yang berubah di v3
 - **Progres per ARTIKEL**, bukan per order. Gambar asli artikel muncul di atas bangunan tempat artikel itu berada. Kota tidak menampilkan data order, pembeli, atau resi; orang mencari resinya sendiri di situs J&T (tombol Cek Resi) dan kode pesanan di web utama (Cek Pesanan di Office).
 - **Upload galeri memilih BANGUNAN** di gambar asli peta FucktheRules (tiap bangunan punya hitbox). Foto tampil di atas bangunan itu.
@@ -16,7 +23,7 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-1`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-3`).
 
 ## 4. Ekspor gambar peta (sekali, setelah kota online)
 1. Buka `https://city.fucktherules.my.id/?exportmap=1` di **laptop atau HP**, tunggu sekitar 5 detik. Dua file terunduh: `city-map.jpg` dan `city-map.json`.
@@ -51,6 +58,9 @@ Cloud `dpkmdjfbt`, preset `gloriam-galeri` (Unsigned). Foto kota masuk folder `f
 | Pin foto tidak muncul | Foto masih pending, atau tidak ada bangunan terpilih |
 | GPS tidak jalan | Situs belum HTTPS atau izin lokasi ditolak |
 | Tampilan lama tersangkut | Hard refresh |
+| Toko tidak tampil / kosong | Game belum dideploy, atau `FTR_CITY_LINKS.game` salah. Tombol ↗ membuka game di tab baru |
+| Cek Resi: "Belum bisa terhubung ke web utama" | Referrer API key belum menyertakan domain kota, atau `firebase.js?v=...` di config tidak sama dengan versi yang dipakai game |
+| Popup pembayaran di toko bermasalah di HP | Pembayaran tertentu (deep link e-wallet) kadang lebih lancar di tab penuh: pakai tombol ↗ |
 | Kamera 3D menembus gedung | Batas versi ini (belum ada tabrakan kamera); putar atau zoom keluar |
 
 ## 9. Keamanan dan batas
