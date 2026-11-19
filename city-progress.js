@@ -2,7 +2,8 @@
    (Toko / Vendor / Office / Kantor J&T / Rumah). Tidak ada data order atau resi di kota: orang mencari resinya sendiri di situs J&T.
    Data: articles = [{id,name,image,color,step,note,timeline:[{step,at}]}]; step = id dari FTR_CITY_STEPS. */
 export function createProgress(C){
-  const T=C.THREE,STEPS=window.FTR_CITY_STEPS||[],L=window.FTR_CITY_LINKS||{};
+  const T=C.THREE;const mkTex=c=>{const t=new T.CanvasTexture(c);if(T.SRGBColorSpace)t.colorSpace=T.SRGBColorSpace;return t;};
+  const STEPS=window.FTR_CITY_STEPS||[],L=window.FTR_CITY_LINKS||{};
   const AT={shop:'fttr',vendor:'vendor',office:'hq',jnt:'jnt',home:'residential'};
   const AT_NAME={shop:'Toko FTR',vendor:'Vendor',office:'Office FTR',jnt:'Kantor J&T',home:'Sampai tujuan'};
   const MAXI=4;let arts=[],demo=false,marks=[],spot=null;const texCache={};
@@ -23,8 +24,8 @@ export function createProgress(C){
     else{x.fillStyle='#f1efe9';x.fillRect(13,13,102,102);shirtArt(x,color);}
     x.restore();return c;}
   function iconMaterial(a,badge){
-    const mat=new T.SpriteMaterial({map:new T.CanvasTexture(pinCanvas(null,a&&a.color,badge)),transparent:true,depthTest:false});
-    if(badge===undefined&&a&&a.image){const k=a.image;if(texCache[k]){mat.map=texCache[k];}else{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const t=new T.CanvasTexture(pinCanvas(im));texCache[k]=t;mat.map=t;mat.needsUpdate=true;}catch{}};im.onerror=()=>{};im.src=k;}}
+    const mat=new T.SpriteMaterial({map:mkTex(pinCanvas(null,a&&a.color,badge)),transparent:true,depthTest:false,toneMapped:false,fog:false});
+    if(badge===undefined&&a&&a.image){const k=a.image;if(texCache[k]){mat.map=texCache[k];}else{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const t=mkTex(pinCanvas(im));texCache[k]=t;mat.map=t;mat.needsUpdate=true;}catch{}};im.onerror=()=>{};im.src=k;}}
     return mat;}
 
   /* ---------- papan Sorotan: keterangan + foto + nama artikel, melayang di atas Toko ---------- */
@@ -38,8 +39,8 @@ export function createProgress(C){
     x.textAlign='center';x.textBaseline='middle';x.fillStyle='#111';x.fillText(fitText(x,String(name||'').toUpperCase(),196,24,12),120,244);
     const lab=String(label||'').toUpperCase();if(lab){x.font='900 20px Inter,Arial,sans-serif';const w=Math.min(228,Math.max(120,x.measureText(lab).width+40));x.fillStyle='#111';rr(120-w/2-3,0,w+6,44,14);x.fill();x.fillStyle=labelColor(lab);rr(120-w/2,3,w,38,11);x.fill();x.fillStyle='#111';x.fillText(fitText(x,lab,w-20,20,11),120,23);}
     return c;}
-  function spotMaterial(){const m=new T.SpriteMaterial({map:new T.CanvasTexture(spotCanvas(null,spot.label,spot.name)),transparent:true,depthTest:false});
-    if(spot.image){const k='spot:'+spot.image+'|'+spot.label+'|'+spot.name;const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{m.map=new T.CanvasTexture(spotCanvas(im,spot.label,spot.name));m.needsUpdate=true;}catch{}};im.src=spot.image;}return m;}
+  function spotMaterial(){const m=new T.SpriteMaterial({map:mkTex(spotCanvas(null,spot.label,spot.name)),transparent:true,depthTest:false,toneMapped:false,fog:false});
+    if(spot.image){const k='spot:'+spot.image+'|'+spot.label+'|'+spot.name;const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{m.map=mkTex(spotCanvas(im,spot.label,spot.name));m.needsUpdate=true;}catch{}};im.src=spot.image;}return m;}
 
   /* ---------- penanda di dunia ---------- */
   function clearMarks(){marks.forEach(m=>{m.parent&&m.parent.remove(m);m.material.dispose();});marks=[];}
