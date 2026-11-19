@@ -51,7 +51,7 @@ export function createGallery({THREE:T,places,group,toast,focus}){
   function bbox(){const m={};try{(window.FTRCityMap?window.FTRCityMap.getBoxes():[]).forEach(b=>{m[b.id]=b;});}catch{}return m;}
   function render(){const g=group();if(!g)return;pins.forEach(p=>{p.parent&&p.parent.remove(p);p.material.map&&p.material.map.dispose();p.material.dispose();});pins=[];
     const bx=bbox(),by={};items.slice(0,MAXPIN).forEach(i=>{if(typeof i.cityX!=='number'||typeof i.cityZ!=='number')return;(by[keyOf(i)]=by[keyOf(i)]||[]).push(i);});
-    Object.entries(by).forEach(([k,list])=>{const b=list[0].place&&bx[list[0].place],cx=b?b.cx:list[0].cityX,cz=b?b.cz:list[0].cityZ,y=b?b.top+4.6:(list[0].place?(list[0].cityY||6)+4.6:3.4);
+    Object.entries(by).forEach(([k,list])=>{const b=list[0].place&&bx[list[0].place],cx=b?b.cx:list[0].cityX,cz=b?b.cz:list[0].cityZ,y=b?b.top+5.6:(list[0].place?(list[0].cityY||6)+5.6:3.4);
       const shown=list.length>PERB?PERB-1:list.length,total=shown+(list.length>shown?1:0);
       for(let i=0;i<total;i++){const extra=i>=shown,off=(i-(total-1)/2)*1.7,sp=new T.Sprite(spriteFor(list[i],extra?list.length-shown:undefined));
         sp.renderOrder=15;sp.scale.set(1.5,1.76,1);sp.center.set(.5,0);sp.position.set(cx+off*.7071,y,cz-off*.7071);sp.userData=extra?{galKey:k}:{galId:list[i].id,galKey:k};g.add(sp);pins.push(sp);}});}

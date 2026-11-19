@@ -9,6 +9,12 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 - **Cek Resi** (Kantor J&T) dan **Cek Pesanan** (Office) memakai pencarian yang SAMA dengan web utama dan HP di game: ketik **ID order / email / no. HP**, hasilnya daftar pesanan, lalu detail dengan resi dan tombol *Salin resi* / *Lacak di J&T ›* (baru setelah resi ketemu). Cek Pesanan menampilkan timeline lengkap. Data pembeli sudah tersamar dari web utama.
 - Pencarian ini membaca `https://fucktherules.my.id/firebase.js` (modul yang sama dengan game). Pastikan **API key Google** project toko mengizinkan `https://city.fucktherules.my.id/*` (Google Cloud Console > Credentials > HTTP referrers), sama seperti yang dulu dilakukan untuk game.
 
+## Mode karakter / non karakter
+Di dock kanan, tepat di bawah tombol ⚡, ada tombol berikon orang.
+- **Aktif (default):** seperti biasa: karakter, bar status, joystick, bisa kerja dan masuk bangunan.
+- **Ikon dicoret = non karakter:** karakter, bar status, dan joystick disembunyikan, kota hanya untuk dilihat-lihat. Geser layar untuk menjelajah; daftar tempat (📍) memindahkan kamera ke tempat itu. Mode 3D di sini berarti kamera orbit (geser untuk memutar).
+- Saat memencet kerja, misi, melamar kerja, atau masuk bangunan di mode non karakter, muncul pesan **"Harus pakai mode karakter"** berisi tutorial 3 langkah dan tombol *Aktifkan sekarang*; tombol karakter berkedip 9 detik. Pilihan mode diingat per perangkat. Toko, Cek Resi, Cek Pesanan, Sorotan, galeri, dan Peta Nyata tetap bisa dipakai di kedua mode.
+
 ## Apa yang berubah di v3
 - **Progres per ARTIKEL**, bukan per order. Gambar asli artikel muncul di atas bangunan tempat artikel itu berada. Kota tidak menampilkan data order, pembeli, atau resi; orang mencari resinya sendiri di situs J&T (tombol Cek Resi) dan kode pesanan di web utama (Cek Pesanan di Office).
 - **Upload galeri di gambar asli peta FucktheRules**: ketuk **bangunan** (hitbox) = foto tampil di atas bangunan itu; ketuk **tempat lain** (jalan, taman, mana saja) = titik bebas persis di situ.
@@ -23,7 +29,7 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-7`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-9`).
 
 ## 4. Gambar peta untuk upload
 - **Di kota:** gambar peta dibuat otomatis dari dunia kota yang sedang tampil. Tidak ada langkah tambahan.

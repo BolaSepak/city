@@ -112,3 +112,13 @@
 .od-tl{margin-top:12px}
 
 .map-modal header small{display:none!important}
+
+/* ===== mode karakter ===== */
+.dk{position:relative}
+.dk[data-act=char].off{background:#fff;color:#777}.dk[data-act=char].off i{opacity:.55}
+.dk[data-act=char].off:after{content:"";position:absolute;left:5px;right:5px;top:50%;height:3px;margin-top:-1.5px;background:#e5484d;border:1px solid #fff;border-radius:2px;transform:rotate(-38deg);pointer-events:none}
+.dk.hint{animation:dkpulse 1s ease-in-out infinite}
+@keyframes dkpulse{0%,100%{box-shadow:0 2px 0 #111,0 0 0 0 rgba(255,213,30,.9)}50%{box-shadow:0 2px 0 #111,0 0 0 9px rgba(255,213,30,0)}}
+body.no-char .hud-stats,body.no-char .joy,body.no-char #joy,body.no-char .hint-bar{display:none!important}
+
+.notice-card p{white-space:pre-line}
