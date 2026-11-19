@@ -23,7 +23,7 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-4`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-5`).
 
 ## 4. Ekspor gambar peta (sekali, setelah kota online)
 1. Buka `https://city.fucktherules.my.id/?exportmap=1` di **laptop atau HP**, tunggu sekitar 5 detik. Dua file terunduh: `city-map.jpg` dan `city-map.json`.
@@ -33,6 +33,9 @@ Tanpa dua file ini, kota tetap jalan (membuat gambar peta langsung dari dunia ya
 
 ## 5. Cloudinary
 Cloud `dpkmdjfbt`, preset `gloriam-galeri` (Unsigned). Foto kota masuk folder `fttr-city/`. Galeri web Gloriam tidak terpengaruh.
+
+## 5b. Sorotan toko
+Admin > Kota > **Sorotan**: pilih satu artikel (foto otomatis dari thumbnail web utama), pilih keterangan (PRE ORDER, READY STOCK, NEW DROP, SEGERA HADIR, SOLD OUT, atau tulis sendiri), lalu **Tampilkan di kota**. Papan berisi keterangan di atas, foto, dan nama artikel melayang di atas Toko FucktheRules City; ketuk papan untuk membuka kartu dan tombol Masuk toko. Disimpan di `cityConfig/spotlight` (tidak perlu mengubah aturan Firebase).
 
 ## 6. Cara kerja progres
 - Admin > Kota > Progres Artikel: pilih satu atau banyak artikel, pilih langkah, (opsional catatan), **Kirim update**.
