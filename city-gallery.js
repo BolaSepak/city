@@ -1,6 +1,6 @@
 /* city-gallery.js (v2): Upload Fotomu, pin foto di ATAS BANGUNAN yang dipilih, kartu detail. Data: cityGallery (Firebase city).
    Publik hanya bisa membuat foto berstatus pending; yang tampil di kota hanya yang approved oleh admin. */
-import {buildUploadForm,loadCityMap} from './city-upload.js?v=4';
+import {buildUploadForm,loadCityMap} from './city-upload.js?v=5';
 const MAXPIN=80,PERB=3,DAY=864e5,LIMIT=5;
 export function createGallery({THREE:T,places,group,toast,focus}){
   const cfgFb=window.FTR_CITY_FIREBASE,cloud=window.FTR_CITY_CLOUDINARY;let fs=null,db=null,pins=[],items=[],root=null,upRoot=null,RM=null;

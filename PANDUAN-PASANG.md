@@ -23,13 +23,13 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-5`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-6`).
 
-## 4. Ekspor gambar peta (sekali, setelah kota online)
-1. Buka `https://city.fucktherules.my.id/?exportmap=1` di **laptop atau HP**, tunggu sekitar 5 detik. Dua file terunduh: `city-map.jpg` dan `city-map.json`.
-2. Upload keduanya ke root repo `fucktherules-city`.
-3. Ulangi kapan pun tata letak kota berubah.
-Tanpa dua file ini, kota tetap jalan (membuat gambar peta langsung dari dunia yang sedang tampil, agak lebih berat), tetapi **admin** hanya punya peta sederhana dan hanya bisa memilih stadion dan stasiun.
+## 4. Gambar peta untuk upload
+- **Di kota:** gambar peta dibuat otomatis dari dunia kota yang sedang tampil. Tidak ada langkah tambahan.
+- **Di admin (Upload manual):** admin membuka kota secara tersembunyi (`?mapmsg=1`) dan menerima gambar peta serta hitbox bangunan. Pertama kali dibuka butuh sekitar 10–30 detik (teks "Memuat peta kota…"), dan setelah itu tersimpan selama halaman tidak dimuat ulang. Kota harus sudah online di `city.fucktherules.my.id`.
+- **Opsional, lebih cepat:** buka `https://city.fucktherules.my.id/?exportmap=1`, tunggu sekitar 5 detik, lalu upload `city-map.jpg` dan `city-map.json` yang terunduh ke root repo kota. Kalau dua file itu ada, keduanya dipakai lebih dulu (kota dan admin langsung memuatnya).
+- Peta sederhana (zona hijau, hanya stadion dan stasiun) hanya muncul kalau semua cara di atas gagal.
 
 ## 5. Cloudinary
 Cloud `dpkmdjfbt`, preset `gloriam-galeri` (Unsigned). Foto kota masuk folder `fttr-city/`. Galeri web Gloriam tidak terpengaruh.
@@ -56,7 +56,8 @@ Admin > Kota > **Sorotan**: pilih satu artikel (foto otomatis dari thumbnail web
 |---|---|
 | `permission-denied` | Rules belum dipublish ulang, atau email admin tidak ada di `isAdmin()` |
 | Gambar artikel hanya ikon kaos | `thumbnail` produk kosong, atau alamat relatif tidak bisa dimuat dari kota (CORS). Pakai alamat gambar penuh (https) |
-| Admin: peta upload sederhana | `city-map.jpg/json` belum diupload ke repo kota (langkah 4) |
+| Admin: peta upload sederhana | Kota belum online/versi lama, atau memuat lebih dari 60 detik. Muat ulang tab Galeri Kota; atau ekspor `city-map.jpg/json` (langkah 4) |
+| Progres Artikel: gambar artikel kosong | Nama artikel di order tidak mirip nama produk. Panel mencocokkan nama persis, tanpa awalan "(Pre Order)", lalu kemiripan kata; ganti nama produk agar mirip jika masih kosong |
 | Upload gagal "Upload preset not found" | Preset salah atau tidak Unsigned |
 | Pin foto tidak muncul | Foto masih pending, atau tidak ada bangunan terpilih |
 | GPS tidak jalan | Situs belum HTTPS atau izin lokasi ditolak |
