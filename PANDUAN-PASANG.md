@@ -9,6 +9,11 @@ Tiga bagian: **kota** (repo `fucktherules-city`), **admin** (repo admin yang sud
 - **Cek Resi** (Kantor J&T) dan **Cek Pesanan** (Office) memakai pencarian yang SAMA dengan web utama dan HP di game: ketik **ID order / email / no. HP**, hasilnya daftar pesanan, lalu detail dengan resi dan tombol *Salin resi* / *Lacak di J&T ›* (baru setelah resi ketemu). Cek Pesanan menampilkan timeline lengkap. Data pembeli sudah tersamar dari web utama.
 - Pencarian ini membaca `https://fucktherules.my.id/firebase.js` (modul yang sama dengan game). Pastikan **API key Google** project toko mengizinkan `https://city.fucktherules.my.id/*` (Google Cloud Console > Credentials > HTTP referrers), sama seperti yang dulu dilakukan untuk game.
 
+## HP kota = FucktheRules App
+- Tombol HP (kuning, kanan atas) dibuat lebih besar dan berdenyut sampai pertama kali dibuka.
+- Beranda HP: kartu **FucktheRules App** paling besar di paling atas. Isinya berurutan: **Website** (kiri atas, membuka `https://fucktherules.my.id`, bukan katalog), Berita, Diskusi, Lacak, Cek Resi, Pelunasan, Jurnal. Aplikasi kota (Messages, City Map, Ride, dan seterusnya) ada di bawahnya.
+- Semua tulisan FTTR yang terlihat diganti menjadi FucktheRules (HP, kartu bangunan, papan toko, stiker).
+
 ## Mode karakter / non karakter
 Di dock kanan, tepat di bawah tombol ⚡, ada tombol berikon orang.
 - **Aktif (default):** seperti biasa: karakter, bar status, joystick, bisa kerja dan masuk bangunan.
@@ -29,7 +34,7 @@ Di dock kanan, tepat di bawah tombol ⚡, ada tombol berikon orang.
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v3-9`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v4-0`).
 
 ## 4. Gambar peta untuk upload
 - **Di kota:** gambar peta dibuat otomatis dari dunia kota yang sedang tampil. Tidak ada langkah tambahan.

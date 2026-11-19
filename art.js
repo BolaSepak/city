@@ -14,7 +14,7 @@ const mkCanvas=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.heig
 const RND=seed=>{let s=(seed*7919+13)%2147483647;return()=>(s=(s*16807+11)%2147483647)/2147483647;};
 function tag(c,t,x,y,s,col,out,rot){c.save();c.translate(x,y);c.rotate(rot||0);c.font='italic 900 '+s+'px Impact,"Arial Black",sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineWidth=s/7;c.strokeStyle=out;c.lineJoin='round';c.strokeText(t,0,0);c.fillStyle=col;c.fillText(t,0,0);c.restore();}
 function stickerArt(c,t,x,y,w,h,bg,fg,rot){c.save();c.translate(x,y);c.rotate(rot);c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=3;c.fillStyle='#fff';c.fillRect(-w/2-3,-h/2-3,w+6,h+6);c.shadowBlur=0;c.fillStyle=bg;c.fillRect(-w/2,-h/2,w,h);c.fillStyle=fg;c.font='900 '+Math.round(h*.5)+'px Arial Black,Impact,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(t,0,1,w-6);c.restore();}
-const STK=[['FTTR','#d7ff3f','#171914'],['LIVE WILD','#171914','#d7ff3f'],['DERBY','#c4533f','#fff'],['NSFC','#2a5fa8','#fff'],['EBU','#d9a441','#171914'],['ERFC','#2f8f5b','#fff'],['ULTRAS','#171914','#fff'],['⚽ LOVE','#fff','#171914'],['NO RULES','#e86ab0','#171914'],['AWAY DAY','#5875a6','#fff']];
+const STK=[['FUCKTHERULES','#d7ff3f','#171914'],['LIVE WILD','#171914','#d7ff3f'],['DERBY','#c4533f','#fff'],['NSFC','#2a5fa8','#fff'],['EBU','#d9a441','#171914'],['ERFC','#2f8f5b','#fff'],['ULTRAS','#171914','#fff'],['⚽ LOVE','#fff','#171914'],['NO RULES','#e86ab0','#171914'],['AWAY DAY','#5875a6','#fff']];
 
 function reg(s){s.works=[];s.loaded=false;SURF.set(s.id,s);s.mesh.userData.artId=s.id;C.pickables.push(s.mesh);s.tex=new T.CanvasTexture(s.cv);s.tex.colorSpace=T.SRGBColorSpace;s.tex.anisotropy=4;s.mesh.material.map=s.tex;s.mesh.material.needsUpdate=true;paint(s);}
 function addPole(x,z,id,seed){const cv=mkCanvas(512,1024),base=mkCanvas(512,1024),b=base.getContext('2d'),r=RND(seed);
@@ -30,7 +30,7 @@ function addBoard(x,z,id){const cv=mkCanvas(640,380),base=mkCanvas(640,380),b=ba
   const mesh=new T.Mesh(new T.PlaneGeometry(3.2,1.9),new T.MeshStandardMaterial({roughness:.9}));mesh.position.set(x,1.9,z+.07);C.cityGroup.add(grp,mesh);
   reg({id,kind:'sticker',name:'PAPAN KOMUNITAS',x,z,nx:0,nz:1,cy:1.9,cv,ctx:cv.getContext('2d'),base,cw:640,ch:380,region:[.04,.96,.06,.94],vw:3.8,vh:2.4,mesh});}
 function addWall(x,z,id,seed){const cv=mkCanvas(960,300),base=mkCanvas(960,300),b=base.getContext('2d'),r=RND(seed);b.fillStyle='#8d8d85';b.fillRect(0,0,960,300);for(let i=0;i<1800;i++){b.fillStyle='rgba('+(r()>.5?'255,255,255':'0,0,0')+','+r()*.08+')';b.fillRect(r()*960,r()*300,2+r()*3,2+r()*3);}
-  const cols=['#d7ff3f','#e86ab0','#2a5fa8','#c4533f','#d9a441','#fff'],words=['FTTR','LIVE WILD','NORTHSIDE','EASTBANK','NO RULES','DERBY','ULTRAS','FOOTBALL'];
+  const cols=['#d7ff3f','#e86ab0','#2a5fa8','#c4533f','#d9a441','#fff'],words=['FUCKTHERULES','LIVE WILD','NORTHSIDE','EASTBANK','NO RULES','DERBY','ULTRAS','FOOTBALL'];
   for(let s=0;s<3;s++){const w=words[(seed+s*2)%8],col=cols[(seed+s)%6];tag(b,w,160+s*320,130+r()*30,w.length>6?46:70,col,'#171914',(r()-.5)*.25);b.strokeStyle=col;b.lineWidth=4;for(let k=0;k<4;k++){b.beginPath();b.moveTo(60+s*320+k*60,185);b.lineTo(60+s*320+k*60,185+30+r()*50);b.stroke();}tag(b,'⚽',70+s*320,250,40,'#fff','#171914',.2);}
   b.fillStyle='rgba(23,25,20,.7)';[1,2].forEach(i=>b.fillRect(i*320-1,0,2,300));
   const grp=new T.Group(),wall=new T.Mesh(new T.BoxGeometry(8,2.8,.3),new T.MeshStandardMaterial({color:'#7d7d75',roughness:1}));wall.position.set(x,1.4,z);wall.castShadow=wall.receiveShadow=true;grp.add(wall);
