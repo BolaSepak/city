@@ -34,7 +34,7 @@ Di dock kanan, tepat di bawah tombol ⚡, ada tombol berikon orang.
 Timpa isi repo admin dengan `admin-main-kota.zip`. Menu Kota punya dua tab: **Progres Artikel** dan **Galeri Kota**.
 
 ## 3. Kota
-Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v4-0`).
+Upload seluruh isi `fucktherules-city-final.zip` ke repo (file di root). Pages + HTTPS + CNAME seperti sebelumnya. Hard refresh setelah update (service worker `ftr-city-shell-v4-1`).
 
 ## 4. Gambar peta untuk upload
 - **Di kota:** gambar peta dibuat otomatis dari dunia kota yang sedang tampil. Tidak ada langkah tambahan.
